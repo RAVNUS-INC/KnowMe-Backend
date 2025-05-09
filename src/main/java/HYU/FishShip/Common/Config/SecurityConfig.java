@@ -1,4 +1,4 @@
-package HYU.FishShip.Config;
+package HYU.FishShip.Common.Config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
