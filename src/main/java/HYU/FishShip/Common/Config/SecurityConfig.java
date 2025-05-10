@@ -1,0 +1,70 @@
+package HYU.FishShip.Common.Config;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        /**
+         * 접근 가능한 url detail modify
+         * */
+        http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/**").permitAll()
+                        .anyRequest().authenticated()
+                );
+
+        /**
+         * csrf 보호 해제
+         * */
+        http
+                .csrf((csrf) -> csrf.disable());
+
+        /**
+         * 커스텀 로그인, 로그아웃 필터 사용
+         * */
+        http
+                .formLogin((formLogin) -> formLogin.disable())
+                .logout((formLogout) -> formLogout.disable());
+
+
+
+        /**
+         * cors 관련 설정
+         * */
+        http
+                .cors((cors) -> cors
+                        .configurationSource(new CorsConfigurationSource() {
+                            @Override
+                            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                                CorsConfiguration config = new CorsConfiguration();
+
+                                config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                                config.setAllowedMethods(Collections.singletonList("*")); // 허용할 메소드 Get ect on
+                                config.setAllowCredentials(true);
+                                config.setAllowedHeaders(Collections.singletonList("*"));
+                                config.setMaxAge(3600L);
+
+                                config.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                                return config;
+                            }
+                        }));
+
+        return http.build();
+    }
+}
