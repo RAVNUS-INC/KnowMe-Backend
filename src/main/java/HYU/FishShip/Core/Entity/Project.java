@@ -14,7 +14,6 @@ public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "project_id")
     private Long id;
 
     @Column(nullable = false)

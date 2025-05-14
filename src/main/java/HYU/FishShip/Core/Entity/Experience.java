@@ -13,7 +13,6 @@ public class Experience {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "experience_id")
     private Long id;
 
     @Column(nullable = false)
@@ -25,7 +24,7 @@ public class Experience {
     private Date start_date;
     private Date end_date;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

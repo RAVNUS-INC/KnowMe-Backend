@@ -11,7 +11,6 @@ import lombok.Setter;
 public class Education {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "education_id")
     private Long id;
 
     private String grade;

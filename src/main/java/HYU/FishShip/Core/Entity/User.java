@@ -41,6 +41,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Experience> experiences = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserSkillMap> userSkillMaps = new ArrayList<>();
+
     public void addEducation(Education education) {
         educations.add(education);
         education.setUser(this);

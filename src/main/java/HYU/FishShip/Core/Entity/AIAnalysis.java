@@ -11,13 +11,12 @@ public class AIAnalysis{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "ai_id")
     private Long id;
 
     @Lob
     private String result_summary;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 }
