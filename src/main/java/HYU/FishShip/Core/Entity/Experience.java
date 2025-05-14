@@ -16,15 +16,17 @@ public class Experience {
     @Column(name = "experience_id")
     private Long id;
 
+    @Column(nullable = false)
     private String company_name;
 
+    @Column(nullable = false)
     private String title;
 
     private Date start_date;
     private Date end_date;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 }

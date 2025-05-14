@@ -18,6 +18,6 @@ public class AIAnalysis{
     private String result_summary;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",nullable = false)
     private User user;
 }

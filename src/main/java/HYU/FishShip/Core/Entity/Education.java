@@ -11,6 +11,7 @@ import lombok.Setter;
 public class Education {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "education_id")
     private Long id;
 
     private String grade;
@@ -20,6 +21,6 @@ public class Education {
     private String major;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",nullable = false)
     private User user;
 }
