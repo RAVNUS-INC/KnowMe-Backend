@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class AIAnalyes{
+public class AIAnalysis{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
