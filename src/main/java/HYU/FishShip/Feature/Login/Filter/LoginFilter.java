@@ -89,11 +89,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         // 응답설정
-        response.setHeader("user_ID", userId);
-        response.setStatus(HttpStatus.OK.value());
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json; charset=UTF-8");
+        response.getWriter().write("{\"result\": \"success\", \"userId\": \"" + authResult.getName() + "\"}");
+        response.getWriter().flush();
 
-        chain.doFilter(request, response);
-
+//        chain.doFilter(request, response);
+// 추후 jwt 토큰 도입하면 호출해야함.
     }
 
     @Override
@@ -102,7 +104,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         log.error("Authentication failed: " + failed.getMessage());
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("Authentication failed.");
+        response.setContentType("application/json; charset=UTF-8");
+        response.getWriter().write("{\"result\": \"fail\", \"message\": \"" + failed.getMessage() + "\"}");
+        response.getWriter().flush();
     }
 
 
