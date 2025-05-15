@@ -89,7 +89,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         // 응답설정
-        response.setHeader("유저 ID", userId);
+        response.setHeader("user_ID", userId);
         response.setStatus(HttpStatus.OK.value());
 
         chain.doFilter(request, response);
