@@ -10,7 +10,7 @@ import lombok.Setter;
 public class AIAnalysis{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Lob
