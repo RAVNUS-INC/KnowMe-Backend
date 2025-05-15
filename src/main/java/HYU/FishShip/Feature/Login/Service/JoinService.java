@@ -22,11 +22,12 @@ public class JoinService {
 
     private final UserRepository userRepository;
     private final EducationRepository educationRepository;
-    private final PasswordUtil passwordUtil = new PasswordUtil(new BCryptPasswordEncoder());
+    private final PasswordUtil passwordUtil;
 
-    public JoinService(UserRepository userRepository, EducationRepository educationRepository) {
+    public JoinService(UserRepository userRepository, EducationRepository educationRepository, PasswordUtil passwordUtil) {
         this.userRepository = userRepository;
         this.educationRepository = educationRepository;
+        this.passwordUtil = passwordUtil;
     }
 
     @Transactional

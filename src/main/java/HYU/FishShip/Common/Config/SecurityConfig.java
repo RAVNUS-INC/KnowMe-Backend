@@ -1,11 +1,19 @@
 package HYU.FishShip.Common.Config;
 
+import HYU.FishShip.Common.Utils.PasswordUtil;
+import HYU.FishShip.Core.Repository.UserRepository;
+import HYU.FishShip.Feature.Login.Filter.LoginFilter;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -17,7 +25,19 @@ public class SecurityConfig {
 
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http,AuthenticationManager authenticationManager) throws Exception {
 
         /**
          * 접근 가능한 url detail modify
@@ -41,8 +61,8 @@ public class SecurityConfig {
                 .formLogin((formLogin) -> formLogin.disable())
                 .logout((formLogout) -> formLogout.disable());
 
-
-
+        http
+                .addFilterAt(new LoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
         /**
          * cors 관련 설정
          * */
