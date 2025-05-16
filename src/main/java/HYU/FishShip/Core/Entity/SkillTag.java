@@ -14,7 +14,7 @@ import java.util.List;
 public class SkillTag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String skill_name;
