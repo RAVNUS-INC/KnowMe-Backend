@@ -1,10 +1,11 @@
 package HYU.FishShip.Common.Config;
 
-import HYU.FishShip.Common.Utils.PasswordUtil;
-import HYU.FishShip.Core.Repository.UserRepository;
+import HYU.FishShip.Common.Utils.CookieUtil;
+import HYU.FishShip.Common.Utils.JwtUtil;
+import HYU.FishShip.Core.Repository.RefreshRepository;
+import HYU.FishShip.Feature.Login.Filter.CustomLogoutFilter;
 import HYU.FishShip.Feature.Login.Filter.LoginFilter;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -23,6 +25,15 @@ import java.util.Collections;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
+    private final RefreshRepository refreshRepository;
+
+    public SecurityConfig(JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository) {
+        this.jwtUtil = jwtUtil;
+        this.cookieUtil = cookieUtil;
+        this.refreshRepository = refreshRepository;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -62,7 +73,10 @@ public class SecurityConfig {
                 .logout((formLogout) -> formLogout.disable());
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager,jwtUtil, cookieUtil,refreshRepository), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterAt(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
+
         /**
          * cors 관련 설정
          * */

@@ -19,7 +19,7 @@ public class JwtUtil {
     }
 
     /**
-     * 유저 아이디를 가져오는 메서드
+     * 유저 로그인 아이디를 가져오는 메서드
      * Jwts.parser().verifyWith(secretKey) :secretKey를 사용하여 JWT의 서명을 검증
      * parseSignedClaims : 클래임 확인
      * getPayload().get("userId", String.class) userId key를 가져옴
@@ -52,7 +52,7 @@ public class JwtUtil {
 
     /**
      * 토큰 생성 메서드
-     * userId : 유저아이디
+     * userId : 유저 로그인 아이디
      * role : 역할
      * expiredMs : 만료시간
      * **/

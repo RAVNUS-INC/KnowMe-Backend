@@ -1,8 +1,9 @@
 package HYU.FishShip.Feature.Login.Filter;
 
-import HYU.FishShip.Common.Utils.PasswordUtil;
-import HYU.FishShip.Core.Entity.User;
-import HYU.FishShip.Core.Repository.UserRepository;
+import HYU.FishShip.Common.Utils.CookieUtil;
+import HYU.FishShip.Common.Utils.JwtUtil;
+import HYU.FishShip.Core.Entity.RefreshToken;
+import HYU.FishShip.Core.Repository.RefreshRepository;
 import HYU.FishShip.Feature.Login.Dto.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -12,29 +13,37 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 
 @Slf4j
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
+    public static final long ACCESSMS = 60 * 60 * 1000L;
+    public static final long REFRESHMS = 24 * 60 * 60 * 1000L;
     private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
+    private final RefreshRepository refreshRepository;
 
-    public LoginFilter(AuthenticationManager authenticationManager) throws Exception {
+    public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository) throws Exception {
         super.setFilterProcessesUrl("/api/user/login");
+        this.jwtUtil = jwtUtil;
+        this.cookieUtil = cookieUtil;
+        this.refreshRepository = refreshRepository;
         this.authenticationManager = authenticationManager;
     }
 
@@ -68,6 +77,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginId, rawPassword);
+        authenticationToken.setDetails(loginId);
 
         return authenticationManager.authenticate(authenticationToken);
     }
@@ -77,7 +87,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("successful authentication");
 
-        String userId = authResult.getName();
+        String userId = (String) authResult.getDetails();
 
         Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
         if (authorities.isEmpty()) {
@@ -88,14 +98,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        // 응답설정
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/json; charset=UTF-8");
-        response.getWriter().write("{\"result\": \"success\", \"userId\": \"" + authResult.getName() + "\"}");
-        response.getWriter().flush();
+        String access = jwtUtil.createJwt("access", userId, role, ACCESSMS);
+        String refresh = jwtUtil.createJwt("refresh", userId, role, REFRESHMS);
 
-//        chain.doFilter(request, response);
-// 추후 jwt 토큰 도입하면 호출해야함.
+        addRefreshEntity(userId, refresh, REFRESHMS);
+
+        // 응답설정
+        response.setHeader("access token", access);
+        response.addCookie(cookieUtil.createCookie("refresh", refresh));
+        response.setStatus(HttpStatus.OK.value());
+        response.setContentType("application/json; charset=UTF-8");
+        response.getWriter().write("{\"result\": \"login access\", \"message\": \"Authentication successful\"}");
+        response.getWriter().flush();
     }
 
     @Override
@@ -110,4 +124,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
 
+    private void addRefreshEntity(String userId, String refresh, Long expiredMs) {
+
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setUserId(userId);
+        refreshToken.setRefresh(refresh);
+        refreshToken.setExpiration(String.valueOf(new Timestamp(date.getTime())));
+
+        refreshRepository.save(refreshToken);
+    }
 }
