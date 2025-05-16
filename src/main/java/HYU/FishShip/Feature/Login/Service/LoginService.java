@@ -1,6 +1,5 @@
 package HYU.FishShip.Feature.Login.Service;
 
-import HYU.FishShip.Common.Utils.PasswordUtil;
 import HYU.FishShip.Core.Entity.Role;
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.UserRepository;
@@ -12,16 +11,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
 public class LoginService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private PasswordUtil passwordUtil;
 
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
