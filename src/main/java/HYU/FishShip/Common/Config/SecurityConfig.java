@@ -3,8 +3,10 @@ package HYU.FishShip.Common.Config;
 import HYU.FishShip.Common.Utils.CookieUtil;
 import HYU.FishShip.Common.Utils.JwtUtil;
 import HYU.FishShip.Core.Repository.RefreshRepository;
-import HYU.FishShip.Feature.Login.Filter.CustomLogoutFilter;
-import HYU.FishShip.Feature.Login.Filter.LoginFilter;
+import HYU.FishShip.Feature.Users.Filter.CustomLogoutFilter;
+import HYU.FishShip.Feature.Users.Filter.JwtFilter;
+import HYU.FishShip.Feature.Users.Filter.LoginFilter;
+import HYU.FishShip.Feature.Users.Handler.ExceptionHandlerFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,11 +30,13 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
     private final RefreshRepository refreshRepository;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
-    public SecurityConfig(JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository) {
+    public SecurityConfig(JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository, ExceptionHandlerFilter exceptionHandlerFilter) {
         this.jwtUtil = jwtUtil;
         this.cookieUtil = cookieUtil;
         this.refreshRepository = refreshRepository;
+        this.exceptionHandlerFilter = exceptionHandlerFilter;
     }
 
     @Bean
@@ -71,7 +75,11 @@ public class SecurityConfig {
         http
                 .formLogin((formLogin) -> formLogin.disable())
                 .logout((formLogout) -> formLogout.disable());
+        http.
+                addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
 
+        http.
+                addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         http
                 .addFilterAt(new LoginFilter(authenticationManager,jwtUtil, cookieUtil,refreshRepository), UsernamePasswordAuthenticationFilter.class);
         http

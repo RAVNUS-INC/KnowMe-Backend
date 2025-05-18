@@ -1,10 +1,9 @@
-package HYU.FishShip.Feature.Login.Controller;
+package HYU.FishShip.Feature.Users.Controller;
 
 import HYU.FishShip.Common.Utils.ApiResponseDTO;
 import HYU.FishShip.Core.Entity.User;
-import HYU.FishShip.Feature.Login.Dto.EducateDTO;
-import HYU.FishShip.Feature.Login.Dto.JoinDTO;
-import HYU.FishShip.Feature.Login.Service.JoinService;
+import HYU.FishShip.Feature.Users.Dto.JoinDTO;
+import HYU.FishShip.Feature.Users.Service.JoinService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +32,7 @@ public class JoinController {
     @PostMapping("/join")
     public ResponseEntity<ApiResponseDTO<Long>> join(@Validated @RequestBody JoinDTO joinDTO) {
         try{
-            log.info("회원가입 시작");
             User user = joinService.saveUser(joinDTO);
-            log.info("회원, 학력 정보 저장 완료");
 
             return ResponseEntity.ok(new ApiResponseDTO<>("success", "회원가입 성공", user.getId()));
         } catch (IllegalArgumentException e){

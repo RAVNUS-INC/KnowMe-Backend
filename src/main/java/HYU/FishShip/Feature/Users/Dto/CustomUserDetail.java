@@ -1,4 +1,4 @@
-package HYU.FishShip.Feature.Login.Dto;
+package HYU.FishShip.Feature.Users.Dto;
 
 import HYU.FishShip.Core.Entity.Role;
 import HYU.FishShip.Core.Entity.User;

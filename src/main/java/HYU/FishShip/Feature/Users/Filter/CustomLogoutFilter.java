@@ -1,4 +1,4 @@
-package HYU.FishShip.Feature.Login.Filter;
+package HYU.FishShip.Feature.Users.Filter;
 
 import HYU.FishShip.Common.Utils.JwtUtil;
 import HYU.FishShip.Core.Repository.RefreshRepository;

@@ -1,8 +1,7 @@
-package HYU.FishShip.Feature.Login.Dto;
+package HYU.FishShip.Feature.Users.Dto;
 
 import HYU.FishShip.Core.Entity.Education;
 import HYU.FishShip.Core.Entity.User;
-import HYU.FishShip.Core.Repository.UserRepository;
 
 public class JoinMapper {
 

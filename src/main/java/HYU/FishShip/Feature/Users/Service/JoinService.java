@@ -1,4 +1,4 @@
-package HYU.FishShip.Feature.Login.Service;
+package HYU.FishShip.Feature.Users.Service;
 
 import HYU.FishShip.Common.Utils.PasswordUtil;
 import HYU.FishShip.Core.Entity.Education;
@@ -6,12 +6,11 @@ import HYU.FishShip.Core.Entity.Role;
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.EducationRepository;
 import HYU.FishShip.Core.Repository.UserRepository;
-import HYU.FishShip.Feature.Login.Dto.EducateDTO;
-import HYU.FishShip.Feature.Login.Dto.JoinDTO;
-import HYU.FishShip.Feature.Login.Dto.JoinMapper;
+import HYU.FishShip.Feature.Users.Dto.EducateDTO;
+import HYU.FishShip.Feature.Users.Dto.JoinDTO;
+import HYU.FishShip.Feature.Users.Dto.JoinMapper;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
