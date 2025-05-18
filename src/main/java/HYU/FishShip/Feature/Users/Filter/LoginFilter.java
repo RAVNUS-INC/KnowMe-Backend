@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
-import static HYU.FishShip.Common.Utils.JwtUtil.ACCESS_TOKEN_EXPIRE_DURATION;
 import static HYU.FishShip.Common.Utils.JwtUtil.REFRESH_TOKEN_EXPIRE_DURATION;
 
 
@@ -99,8 +98,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String access = jwtUtil.createJwt("access", userId, role, ACCESS_TOKEN_EXPIRE_DURATION);
-        String refresh = jwtUtil.createJwt("refresh", userId, role, REFRESH_TOKEN_EXPIRE_DURATION);
+        String access = jwtUtil.createAccessToken( userId, role);
+        String refresh = jwtUtil.createRefreshToken(userId);
 
         addRefreshEntity(userId, refresh, REFRESH_TOKEN_EXPIRE_DURATION);
 

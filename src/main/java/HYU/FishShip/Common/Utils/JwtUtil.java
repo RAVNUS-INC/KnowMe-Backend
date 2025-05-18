@@ -15,72 +15,58 @@ public class JwtUtil {
     public static final long ACCESS_TOKEN_EXPIRE_DURATION = 60 * 60 * 1000L;
     public static final long REFRESH_TOKEN_EXPIRE_DURATION = 24 * 60 * 60 * 1000L;
 
+    private final SecretKey accessKey;
+    private final SecretKey refreshKey;
 
-    private SecretKey secretKey;
-
-    public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
-        secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
-
+    public JwtUtil(@Value("${spring.jwt.access-secret}") String accessSecret,
+                   @Value("${spring.jwt.refresh-secret}") String refreshSecret) {
+        this.accessKey = new SecretKeySpec(accessSecret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+        this.refreshKey = new SecretKeySpec(refreshSecret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
     /**
-     * 유저 로그인 아이디를 가져오는 메서드
-     * Jwts.parser().verifyWith(secretKey) :secretKey를 사용하여 JWT의 서명을 검증
-     * parseSignedClaims : 클래임 확인
-     * getPayload().get("userId", String.class) userId key를 가져옴
-     * **/
-    public String getUserId(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("loginId", String.class);
+     * 토큰 만료 여부 확인
+     */
+    public Boolean isExpired(String token, boolean isAccessToken) {
+        Claims claims = getClaims(token, isAccessToken);
+        return claims.getExpiration().before(new Date());
     }
 
     /**
-     * 유저 역할 확인하는 메서드
-     * **/
-    public String getRole(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
-    }
-
-    /**
-     * 토큰 만료 했는지 검증하는 메서드
-     * **/
-    public Boolean isExpired(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
-    }
-
-    public String getCategory(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
-    }
-
-    /**
-     * 토큰 생성 메서드
-     * userId : 유저 로그인 아이디
-     * role : 역할
-     * expiredMs : 만료시간
-     * **/
-    public String createJwt(String category,String loginId, String role, Long expiredMs) {
-
+     * Access Token 생성 메서드
+     */
+    public String createAccessToken(String loginId, String role) {
         return Jwts.builder()
-                .claim("category", category)
+                .claim("category", "access")
                 .claim("loginId", loginId)
                 .claim("role", role)
-                .issuedAt(new Date(System.currentTimeMillis())) // 생성시간
-                .expiration(new Date(System.currentTimeMillis() + expiredMs)) // 만료시간
-                .signWith(secretKey)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_DURATION))
+                .signWith(accessKey)
                 .compact();
     }
 
+    /**
+     * Refresh Token 생성 메서드
+     */
+    public String createRefreshToken(String loginId) {
+        return Jwts.builder()
+                .claim("category", "refresh")
+                .claim("loginId", loginId)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_DURATION))
+                .signWith(refreshKey)
+                .compact();
+    }
     /**
      * 토큰 검증 메서드
      * @param token jwt token
      * @return claims
      */
-    public Claims getClaims(String token) {
+    public Claims getClaims(String token, boolean isAccessToken) {
+        SecretKey key = isAccessToken ? accessKey : refreshKey;
         return Jwts.parser()
-                .verifyWith(secretKey)
+                .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

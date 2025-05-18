@@ -76,12 +76,12 @@ public class SecurityConfig {
                 .formLogin((formLogin) -> formLogin.disable())
                 .logout((formLogout) -> formLogout.disable());
         http.
-                addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
-
+                addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class);
         http.
                 addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         http
-                .addFilterAt(new LoginFilter(authenticationManager,jwtUtil, cookieUtil,refreshRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager,jwtUtil, cookieUtil,refreshRepository),
+                        UsernamePasswordAuthenticationFilter.class);
         http
                 .addFilterAt(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
 

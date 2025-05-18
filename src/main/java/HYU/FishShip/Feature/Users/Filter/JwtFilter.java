@@ -56,7 +56,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         try {
-            Claims claims = jwtUtil.getClaims(accessToken);
+            Claims claims = jwtUtil.getClaims(accessToken, true);
             if (claims.getExpiration().before(new Date())) {
                 throw new ExpiredJwtException(null, claims, "Token expired");
             }
@@ -86,7 +86,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // 헤더에 Auth 정보가 없을 경우 쿠키에서 토큰 검색
         String token = accessToken.replace("Bearer ", "");
 
-        Claims claims = jwtUtil.getClaims(token);
+        Claims claims = jwtUtil.getClaims(token,true);
         setUpAuthentication(claims);
         filterChain.doFilter(request, response);
     }

@@ -65,20 +65,13 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         //만료 체크
         try {
-            jwtUtil.isExpired(refresh);
+            jwtUtil.isExpired(refresh,true);
         } catch (ExpiredJwtException e) {
             //response status code
             getSetStatus(response);
             throw e;
         }
 
-        // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
-        String category = jwtUtil.getCategory(refresh);
-        if (!category.equals("refresh")) {
-            //response status code
-            getSetStatus(response);
-            return;
-        }
 
         //DB에 저장되어 있는지 확인
         Boolean isExist = refreshRepository.existsByRefresh(refresh);
