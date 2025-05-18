@@ -4,7 +4,7 @@ import HYU.FishShip.Common.Utils.CookieUtil;
 import HYU.FishShip.Common.Utils.JwtUtil;
 import HYU.FishShip.Core.Entity.RefreshToken;
 import HYU.FishShip.Core.Repository.RefreshRepository;
-import HYU.FishShip.Feature.Users.Dto.LoginDTO;
+import HYU.FishShip.Feature.Users.Dto.LoginRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -56,13 +56,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             return null;
         }
 
-        LoginDTO loginDTO;
+        LoginRequestDTO loginDTO;
 
         try {
             InputStream inputStream = request.getInputStream();
             ObjectMapper mapper = new ObjectMapper();
             String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-            loginDTO = mapper.readValue(messageBody, LoginDTO.class);
+            loginDTO = mapper.readValue(messageBody, LoginRequestDTO.class);
 
         } catch (IOException e) {
             throw new RuntimeException(e);

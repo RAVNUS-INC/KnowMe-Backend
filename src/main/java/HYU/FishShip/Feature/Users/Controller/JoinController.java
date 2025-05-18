@@ -2,7 +2,7 @@ package HYU.FishShip.Feature.Users.Controller;
 
 import HYU.FishShip.Common.Utils.ApiResponseDTO;
 import HYU.FishShip.Core.Entity.User;
-import HYU.FishShip.Feature.Users.Dto.JoinDTO;
+import HYU.FishShip.Feature.Users.Dto.JoinRequestDTO;
 import HYU.FishShip.Feature.Users.Service.JoinService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class JoinController {
      * */
 
     @PostMapping("/join")
-    public ResponseEntity<ApiResponseDTO<Long>> join(@Validated @RequestBody JoinDTO joinDTO) {
+    public ResponseEntity<ApiResponseDTO<Long>> join(@Validated @RequestBody JoinRequestDTO joinDTO) {
         try{
             User user = joinService.saveUser(joinDTO);
 

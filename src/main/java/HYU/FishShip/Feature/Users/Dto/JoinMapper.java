@@ -5,7 +5,7 @@ import HYU.FishShip.Core.Entity.User;
 
 public class JoinMapper {
 
-    public static User UsertoEntity(JoinDTO joinDTO) {
+    public static User UsertoEntity(JoinRequestDTO joinDTO) {
         User user = new User();
 
         user.setLoginId(joinDTO.getLoginId());
@@ -20,7 +20,7 @@ public class JoinMapper {
         return user;
     }
 
-    public static Education EducationtoEntity(EducateDTO educateDTO, User user) {
+    public static Education EducationtoEntity(EducateRequestDTO educateDTO, User user) {
 
         Education education = new Education();
         education.setGrade(educateDTO.getGrade());

@@ -8,20 +8,20 @@ import java.util.List;
 
 @Getter
 @Setter
-public class JoinDTO {
+public class JoinRequestDTO {
 
     private String loginId;
     private String password;
     private String phone;
     private String email;
-    private Role role;
     private String name;
+    private Role role;
     private String provider;
     private String providerId;
-    private List<EducateDTO> educations;
+    private List<EducateRequestDTO> educations;
 
-    public JoinDTO(String loginId, String password, String phone, String email,
-                   String name, String provider, String providerId) {
+    public JoinRequestDTO(String loginId, String password, String phone, String email,
+                          String name, String provider, String providerId) {
         this.loginId = loginId;
         this.password = password;
         this.phone = phone;

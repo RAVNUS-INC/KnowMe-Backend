@@ -6,8 +6,8 @@ import HYU.FishShip.Core.Entity.Role;
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.EducationRepository;
 import HYU.FishShip.Core.Repository.UserRepository;
-import HYU.FishShip.Feature.Users.Dto.EducateDTO;
-import HYU.FishShip.Feature.Users.Dto.JoinDTO;
+import HYU.FishShip.Feature.Users.Dto.EducateRequestDTO;
+import HYU.FishShip.Feature.Users.Dto.JoinRequestDTO;
 import HYU.FishShip.Feature.Users.Dto.JoinMapper;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class JoinService {
     }
 
     @Transactional
-    public User saveUser(JoinDTO joinDTO) {
+    public User saveUser(JoinRequestDTO joinDTO) {
         String loginId = joinDTO.getLoginId();
         log.info("회원가입 시작 : {}", joinDTO.getLoginId());
 
@@ -62,13 +62,13 @@ public class JoinService {
         }
     }
 
-    private void saveEducations(List<EducateDTO> educations, User user) {
+    private void saveEducations(List<EducateRequestDTO> educations, User user) {
         if (educations == null || educations.isEmpty()) {
             log.info("학력 정보가 없습니다.");
             return;
         }
 
-        for (EducateDTO educateDTO : educations) {
+        for (EducateRequestDTO educateDTO : educations) {
             try {
                 Education education = JoinMapper.EducationtoEntity(educateDTO, user);
                 educationRepository.save(education);
