@@ -28,12 +28,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
+import static HYU.FishShip.Common.Utils.JwtUtil.ACCESS_TOKEN_EXPIRE_DURATION;
+import static HYU.FishShip.Common.Utils.JwtUtil.REFRESH_TOKEN_EXPIRE_DURATION;
+
 
 @Slf4j
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
-    public static final long ACCESSMS = 60 * 60 * 1000L;
-    public static final long REFRESHMS = 24 * 60 * 60 * 1000L;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
@@ -98,10 +99,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String access = jwtUtil.createJwt("access", userId, role, ACCESSMS);
-        String refresh = jwtUtil.createJwt("refresh", userId, role, REFRESHMS);
+        String access = jwtUtil.createJwt("access", userId, role, ACCESS_TOKEN_EXPIRE_DURATION);
+        String refresh = jwtUtil.createJwt("refresh", userId, role, REFRESH_TOKEN_EXPIRE_DURATION);
 
-        addRefreshEntity(userId, refresh, REFRESHMS);
+        addRefreshEntity(userId, refresh, REFRESH_TOKEN_EXPIRE_DURATION);
 
         // 응답설정
         response.setHeader("access token", access);

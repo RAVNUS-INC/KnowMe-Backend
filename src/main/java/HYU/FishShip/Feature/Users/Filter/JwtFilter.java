@@ -3,6 +3,7 @@ package HYU.FishShip.Feature.Users.Filter;
 import HYU.FishShip.Common.Utils.JwtUtil;
 import HYU.FishShip.Core.Entity.Role;
 import HYU.FishShip.Core.Entity.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,14 +56,16 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         try {
-            jwtUtil.isExpired(accessToken);
+            Claims claims = jwtUtil.getClaims(accessToken);
+            if (claims.getExpiration().before(new Date())) {
+                throw new ExpiredJwtException(null, claims, "Token expired");
+            }
         } catch (ExpiredJwtException e) {
-
-            //response body
+            // response body
             PrintWriter writer = response.getWriter();
             writer.print("access token expired");
 
-            //response status code
+            // response status code
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -82,7 +86,8 @@ public class JwtFilter extends OncePerRequestFilter {
         // 헤더에 Auth 정보가 없을 경우 쿠키에서 토큰 검색
         String token = accessToken.replace("Bearer ", "");
 
-        setUpAuthentication(token);
+        Claims claims = jwtUtil.getClaims(token);
+        setUpAuthentication(claims);
         filterChain.doFilter(request, response);
     }
 
@@ -97,9 +102,9 @@ public class JwtFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private void setUpAuthentication(String token) {
-        String loginId = jwtUtil.getUserId(token);
-        String role = jwtUtil.getRole(token);
+    private void setUpAuthentication(Claims claims) {
+        String loginId = claims.get("loginId", String.class);
+        String role = claims.get("role", String.class);
 
         User user = new User();  //user를 생성하여 값 set
         user.setLoginId(loginId);
@@ -114,4 +119,6 @@ public class JwtFilter extends OncePerRequestFilter {
         // 세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
     }
+
+
 }

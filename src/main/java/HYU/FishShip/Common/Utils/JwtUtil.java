@@ -1,5 +1,6 @@
 package HYU.FishShip.Common.Utils;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,10 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
+    public static final long ACCESS_TOKEN_EXPIRE_DURATION = 60 * 60 * 1000L;
+    public static final long REFRESH_TOKEN_EXPIRE_DURATION = 24 * 60 * 60 * 1000L;
+
+
     private SecretKey secretKey;
 
     public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
@@ -66,6 +71,19 @@ public class JwtUtil {
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) // 만료시간
                 .signWith(secretKey)
                 .compact();
+    }
+
+    /**
+     * 토큰 검증 메서드
+     * @param token jwt token
+     * @return claims
+     */
+    public Claims getClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
 }
