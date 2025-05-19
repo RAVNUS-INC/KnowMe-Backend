@@ -1,7 +1,10 @@
 package HYU.FishShip.Feature.Users.Handler;
 
+import HYU.FishShip.Common.Utils.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,10 +20,19 @@ import java.io.IOException;
 @Component
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
+    private final JwtUtil jwtUtil;
+
+    public ExceptionHandlerFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            // Refresh Token을 사용하여 Access Token 재발급 로직 추가
+            handleExpiredJwtException(request, response, e);
         } catch (Exception e) {
             setErrorResponse(HttpStatus.UNAUTHORIZED, request, response, e);
         }
@@ -60,12 +72,36 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             this.message = message;
             this.path = path;
         }
-
-
-
         public String convertToJson() throws JsonProcessingException {
             return objectMapper.writeValueAsString(this);
-}
+        }
     }
 
+    private void handleExpiredJwtException(HttpServletRequest request, HttpServletResponse response, ExpiredJwtException e) throws IOException {
+        String refreshToken = request.getHeader("Refresh-Token");
+        if (refreshToken != null && validateRefreshToken(refreshToken)) {
+            String newAccessToken = generateNewAccessToken(refreshToken);
+            response.setStatus(HttpStatus.OK.value());
+            response.setContentType("application/json; charset=UTF-8");
+            response.getWriter().write("{\"accessToken\": \"" + newAccessToken + "\"}");
+        } else {
+            setErrorResponse(HttpStatus.UNAUTHORIZED, request, response, e);
+        }
+    }
+
+    private String generateNewAccessToken(String refreshToken) {
+        Claims claims = jwtUtil.getClaims(refreshToken, false);
+        String loginId = claims.get("loginId", String.class);
+        String role = claims.get("role", String.class);
+        return jwtUtil.createAccessToken(loginId, role);
+    }
+
+    private boolean validateRefreshToken(String refreshToken) {
+        try {
+            Claims claims = jwtUtil.getClaims(refreshToken, false);
+            return !jwtUtil.isExpired(refreshToken, false) && "refresh".equals(claims.get("category"));
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

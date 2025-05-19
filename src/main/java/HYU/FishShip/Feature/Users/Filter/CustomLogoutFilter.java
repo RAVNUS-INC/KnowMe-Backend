@@ -26,7 +26,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest httpRequest, ServletResponse httpResponse, FilterChain filterChain)
             throws IOException, ServletException {
-//        doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
         HttpServletRequest request = (HttpServletRequest) httpRequest;
         HttpServletResponse response = (HttpServletResponse) httpResponse;
 
@@ -41,7 +40,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         String requestMethod = request.getMethod();
 
         /**
-         * POST 요청 맊아챔.
+         * POST 요청 낚아챔.
          * */
         if (!requestMethod.equals("POST")) {  //logout 요청 + POST 요청만 낚아챔.
             filterChain.doFilter(request, response);
@@ -63,29 +62,14 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-        //만료 체크
-        try {
-            jwtUtil.isExpired(refresh,true);
-        } catch (ExpiredJwtException e) {
-            //response status code
-            getSetStatus(response);
-            throw e;
-        }
-
-
-        //DB에 저장되어 있는지 확인
         Boolean isExist = refreshRepository.existsByRefresh(refresh);
         if (!isExist) {
-            //response status code
             getSetStatus(response);
             return;
         }
 
-        //로그아웃 진행
-        //Refresh 토큰 DB에서 제거
         refreshRepository.deleteByRefresh(refresh);
 
-        //Refresh 토큰 Cookie 값 0
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");

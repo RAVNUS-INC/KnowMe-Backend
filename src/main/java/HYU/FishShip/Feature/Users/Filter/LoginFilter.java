@@ -52,7 +52,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             throws AuthenticationException {
 
         if (!"POST".equalsIgnoreCase(request.getMethod())) {
-            // POST 요청이 아닌 경우 인증을 시도하지 않음
             return null;
         }
 
@@ -72,8 +71,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String loginId = loginDTO.getLoginId();
         String rawPassword = loginDTO.getPassword();
 
-        log.info("loginid = [{}], " +
-                "password = [{}]", loginId, rawPassword);
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginId, rawPassword);
@@ -85,13 +82,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        log.info("successful authentication");
-
         String userId = (String) authResult.getDetails();
 
         Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
         if (authorities.isEmpty()) {
-            log.error("Granted Authorities are empty!");
             throw new RuntimeException("User has no granted authorities");
         }
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -114,9 +108,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-
-        log.error("Authentication failed: " + failed.getMessage());
-
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json; charset=UTF-8");
         response.getWriter().write("{\"result\": \"fail\", \"message\": \"" + failed.getMessage() + "\"}");

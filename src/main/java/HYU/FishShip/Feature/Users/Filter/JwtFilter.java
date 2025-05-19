@@ -17,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,28 +46,19 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 //        String authorization = request.getHeader("Authorization");
         String accessToken = request.getHeader("Authorization");
-        // 토큰이 없다면 다음 필터로 넘김
+
         if (accessToken == null) {
             filterChain.doFilter(request, response);
 
             return;
         }
 
-        // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
-        try {
-            Claims claims = jwtUtil.getClaims(accessToken, true);
-            if (claims.getExpiration().before(new Date())) {
-                throw new ExpiredJwtException(null, claims, "Token expired");
-            }
-        } catch (ExpiredJwtException e) {
-            // response body
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
+        Claims claims = jwtUtil.getClaims(accessToken, true);
 
-            // response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+        if (claims.getExpiration().before(new Date())) {
+            throw new ExpiredJwtException(null, claims, "Token expired");
         }
+
 
         // 헤더에 Authorization 정보가 없을 경우 필터 진행 후 종료
         if (accessToken == null || accessToken.isEmpty()) {
@@ -86,8 +76,8 @@ public class JwtFilter extends OncePerRequestFilter {
         // 헤더에 Auth 정보가 없을 경우 쿠키에서 토큰 검색
         String token = accessToken.replace("Bearer ", "");
 
-        Claims claims = jwtUtil.getClaims(token,true);
-        setUpAuthentication(claims);
+        Claims claim = jwtUtil.getClaims(token,true);
+        setUpAuthentication(claim);
         filterChain.doFilter(request, response);
     }
 
