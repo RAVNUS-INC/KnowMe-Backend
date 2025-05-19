@@ -83,7 +83,7 @@ public class SecurityConfig {
                 .addFilterAt(new LoginFilter(authenticationManager,jwtUtil, cookieUtil,refreshRepository),
                         UsernamePasswordAuthenticationFilter.class);
         http
-                .addFilterAt(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
+                .addFilterAt(new CustomLogoutFilter(refreshRepository), LogoutFilter.class);
 
         /**
          * cors 관련 설정

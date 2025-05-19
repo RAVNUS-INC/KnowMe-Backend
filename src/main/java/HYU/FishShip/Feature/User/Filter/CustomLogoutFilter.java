@@ -1,6 +1,5 @@
 package HYU.FishShip.Feature.User.Filter;
 
-import HYU.FishShip.Common.Utils.JwtUtil;
 import HYU.FishShip.Core.Repository.RefreshRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,11 +13,9 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 
 public class CustomLogoutFilter extends GenericFilterBean {
-    private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
-    public CustomLogoutFilter(JwtUtil jwtUtil, RefreshRepository refreshRepository) {
-        this.jwtUtil = jwtUtil;
+    public CustomLogoutFilter(RefreshRepository refreshRepository) {
         this.refreshRepository = refreshRepository;
     }
 
