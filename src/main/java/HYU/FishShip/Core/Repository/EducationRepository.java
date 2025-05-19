@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EducationRepository extends JpaRepository<Education, Long> {
     Education save(Education education);
+    Long findbyEducationId(Long id);
 }

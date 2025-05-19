@@ -7,7 +7,6 @@ import HYU.FishShip.Core.Repository.RefreshRepository;
 import HYU.FishShip.Feature.Users.Dto.LoginRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +38,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final CookieUtil cookieUtil;
     private final RefreshRepository refreshRepository;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository) throws Exception {
+    public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
+                       CookieUtil cookieUtil, RefreshRepository refreshRepository) {
         super.setFilterProcessesUrl("/api/user/login");
         this.jwtUtil = jwtUtil;
         this.cookieUtil = cookieUtil;
@@ -81,7 +81,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                            FilterChain chain, Authentication authResult) throws IOException, ServletException {
+                                            FilterChain chain, Authentication authResult)
+            throws IOException{
         String userId = (String) authResult.getDetails();
 
         Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
@@ -107,7 +108,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed)
+            throws IOException{
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json; charset=UTF-8");
         response.getWriter().write("{\"result\": \"fail\", \"message\": \"" + failed.getMessage() + "\"}");
