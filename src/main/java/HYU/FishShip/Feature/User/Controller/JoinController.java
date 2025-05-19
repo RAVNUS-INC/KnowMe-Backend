@@ -1,10 +1,10 @@
-package HYU.FishShip.Feature.Users.Controller;
+package HYU.FishShip.Feature.User.Controller;
 
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.EducationRepository;
-import HYU.FishShip.Feature.Users.Dto.JoinRequestDTO;
-import HYU.FishShip.Feature.Users.Dto.JoinResponseDTO;
-import HYU.FishShip.Feature.Users.Service.JoinService;
+import HYU.FishShip.Feature.User.Dto.JoinRequestDTO;
+import HYU.FishShip.Feature.User.Dto.JoinResponseDTO;
+import HYU.FishShip.Feature.User.Service.JoinService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class JoinController {
 
     private final JoinService joinService;

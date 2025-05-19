@@ -1,4 +1,4 @@
-package HYU.FishShip.Feature.Users.Handler;
+package HYU.FishShip.Feature.User.Handler;
 
 import HYU.FishShip.Common.Utils.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;

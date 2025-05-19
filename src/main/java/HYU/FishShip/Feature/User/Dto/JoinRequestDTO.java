@@ -1,4 +1,4 @@
-package HYU.FishShip.Feature.Users.Dto;
+package HYU.FishShip.Feature.User.Dto;
 
 import HYU.FishShip.Core.Entity.Role;
 import lombok.Getter;

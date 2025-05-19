@@ -1,4 +1,4 @@
-package HYU.FishShip.Feature.Users.Dto;
+package HYU.FishShip.Feature.User.Dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

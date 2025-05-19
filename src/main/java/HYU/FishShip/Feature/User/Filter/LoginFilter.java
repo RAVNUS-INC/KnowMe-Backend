@@ -1,10 +1,10 @@
-package HYU.FishShip.Feature.Users.Filter;
+package HYU.FishShip.Feature.User.Filter;
 
 import HYU.FishShip.Common.Utils.CookieUtil;
 import HYU.FishShip.Common.Utils.JwtUtil;
 import HYU.FishShip.Core.Entity.RefreshToken;
 import HYU.FishShip.Core.Repository.RefreshRepository;
-import HYU.FishShip.Feature.Users.Dto.LoginRequestDTO;
+import HYU.FishShip.Feature.User.Dto.LoginRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package HYU.FishShip.Feature.Users.Filter;
+package HYU.FishShip.Feature.User.Filter;
 
 import HYU.FishShip.Common.Utils.JwtUtil;
 import HYU.FishShip.Core.Entity.Role;
