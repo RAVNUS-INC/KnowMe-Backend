@@ -99,7 +99,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
     private boolean validateRefreshToken(String refreshToken) {
         try {
             Claims claims = jwtUtil.getClaims(refreshToken, false);
-            return !jwtUtil.isExpired(refreshToken, false) && "refresh".equals(claims.get("category"));
+            return "refresh".equals(claims.get("category"));
         } catch (Exception e) {
             return false;
         }

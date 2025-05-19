@@ -25,14 +25,6 @@ public class JwtUtil {
     }
 
     /**
-     * 토큰 만료 여부 확인
-     */
-    public Boolean isExpired(String token, boolean isAccessToken) {
-        Claims claims = getClaims(token, isAccessToken);
-        return claims.getExpiration().before(new Date());
-    }
-
-    /**
      * Access Token 생성 메서드
      */
     public String createAccessToken(String loginId, String role) {
