@@ -1,11 +1,23 @@
 package HYU.FishShip.Common.Config;
 
+import HYU.FishShip.Common.Utils.CookieUtil;
+import HYU.FishShip.Common.Utils.JwtUtil;
+import HYU.FishShip.Core.Repository.RefreshRepository;
+import HYU.FishShip.Feature.User.Filter.CustomLogoutFilter;
+import HYU.FishShip.Feature.User.Filter.JwtFilter;
+import HYU.FishShip.Feature.User.Filter.LoginFilter;
+import HYU.FishShip.Feature.User.Handler.ExceptionHandlerFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -15,9 +27,32 @@ import java.util.Collections;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
+    private final RefreshRepository refreshRepository;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
+
+    public SecurityConfig(JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository, ExceptionHandlerFilter exceptionHandlerFilter) {
+        this.jwtUtil = jwtUtil;
+        this.cookieUtil = cookieUtil;
+        this.refreshRepository = refreshRepository;
+        this.exceptionHandlerFilter = exceptionHandlerFilter;
+    }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http,AuthenticationManager authenticationManager) throws Exception {
 
         /**
          * 접근 가능한 url detail modify
@@ -40,8 +75,15 @@ public class SecurityConfig {
         http
                 .formLogin((formLogin) -> formLogin.disable())
                 .logout((formLogout) -> formLogout.disable());
-
-
+        http.
+                addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class);
+        http.
+                addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterAt(new LoginFilter(authenticationManager,jwtUtil, cookieUtil,refreshRepository),
+                        UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterAt(new CustomLogoutFilter(refreshRepository), LogoutFilter.class);
 
         /**
          * cors 관련 설정

@@ -14,11 +14,14 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String login_id;
+    @Column(name = "login_id", unique = true, nullable = false)
+    private String loginId;
+
+    @Column(nullable = false)
+    private String name;
 
     private String password;
 
@@ -30,6 +33,11 @@ public class User {
 
     @Column(nullable = false)
     private String email;
+
+    private String provider;
+
+    @Column(name = "provider_id")
+    private String providerId;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Education> educations = new ArrayList<>();
