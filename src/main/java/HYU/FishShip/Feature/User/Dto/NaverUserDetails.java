@@ -31,12 +31,17 @@ public class NaverUserDetails implements OAuth2UserInfo {
     }
 
     @Override
-    public String getNickname() {
-        return (String) response.get("nickname");
+    public String getName() {
+        return (String) response.get("name");
     }
 
     @Override
     public String getEmail() {
+        return (String) response.get("email");
+    }
+
+    @Override
+    public String getLoginId() {
         return (String) response.get("email");
     }
 
