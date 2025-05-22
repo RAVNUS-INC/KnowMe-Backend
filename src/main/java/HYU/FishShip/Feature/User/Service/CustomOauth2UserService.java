@@ -1,27 +1,44 @@
 package HYU.FishShip.Feature.User.Service;
 
+import HYU.FishShip.Common.Utils.CookieUtil;
+import HYU.FishShip.Common.Utils.JwtUtil;
+import HYU.FishShip.Core.Entity.RefreshToken;
 import HYU.FishShip.Core.Entity.Role;
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.OAuth2UserInfo;
+import HYU.FishShip.Core.Repository.RefreshRepository;
 import HYU.FishShip.Core.Repository.UserRepository;
 import HYU.FishShip.Feature.User.Dto.CustomUserDetail;
 import HYU.FishShip.Feature.User.Dto.JoinRequestDTO;
 import HYU.FishShip.Feature.User.Dto.NaverUserDetails;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 import static HYU.FishShip.Common.Utils.JwtUtil.REFRESH_TOKEN_EXPIRE_DURATION;
 
+@Service
 public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     private final JoinService joinService;
+    private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
+    private final RefreshRepository refreshRepository;
+    private final HttpServletResponse response;
 
-    public CustomOauth2UserService(UserRepository userRepository, JoinService joinService) {
+    public CustomOauth2UserService(UserRepository userRepository, JoinService joinService, JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository, HttpServletResponse response) {
         this.userRepository = userRepository;
         this.joinService = joinService;
+        this.jwtUtil = jwtUtil;
+        this.cookieUtil = cookieUtil;
+        this.refreshRepository = refreshRepository;
+        this.response = response;
     }
 
     public OAuth2User loadUser(OAuth2UserRequest request) throws OAuth2AuthenticationException {
@@ -55,6 +72,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         } else if (! savedUser.getProvider().equals(provider)) {
             return registerNewUser(oAuth2User, mobile, loginId, name, email, role, provider, userInfoId);
         } else {
+            issueAndSaveRefreshToken(loginId, role, response);
             return new CustomUserDetail( savedUser, oAuth2User.getAttributes());
         }
     }
@@ -72,7 +90,31 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
         User savedUser = joinService.saveUser(joinDTO);
 
+        issueAndSaveRefreshToken(loginId, role, response);
         return new CustomUserDetail(savedUser, oAuth2User.getAttributes());
     }
 
+    private void issueAndSaveRefreshToken(String loginId, String role, HttpServletResponse response) {
+        String refreshToken = jwtUtil.createRefreshToken(loginId);
+
+        response.addCookie(cookieUtil.createCookie("refresh", refreshToken));
+
+        if(refreshRepository.existsByUserId(loginId)){
+            refreshRepository.deleteByUserId(loginId);
+        }
+
+        addRefreshEntity(loginId, refreshToken, REFRESH_TOKEN_EXPIRE_DURATION);
+    }
+
+    private void addRefreshEntity(String loginId, String refresh, Long expiredMs) {
+
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+        RefreshToken refreshEntity = new RefreshToken();
+        refreshEntity.setUserId(loginId);
+        refreshEntity.setRefresh(refresh);
+        refreshEntity.setExpiration(date.toString());
+
+        refreshRepository.save(refreshEntity);
+    }
 }
