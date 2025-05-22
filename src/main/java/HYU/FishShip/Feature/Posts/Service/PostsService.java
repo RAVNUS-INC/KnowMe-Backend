@@ -41,15 +41,18 @@ public class PostsService {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 공고가 존재하지 않습니다."));
 
-        post.setCategory(dto.getCategory());
-        post.setTitle(dto.getTitle());
-        post.setCompany(dto.getCompany());
-        post.setLocation(dto.getLocation());
-        post.setEmployment_type(dto.getEmployment_type());
-        post.setStart_date(dto.getStart_date());
-        post.setEnd_date(dto.getEnd_date());
-        post.setDescription(dto.getDescription());
-        post.setUpdated_at(ZonedDateTime.now());
+                    Posts.builder()
+                            .category(dto.getCategory())
+                            .title(dto.getTitle())
+                            .company(dto.getCompany())
+                            .location(dto.getLocation())
+                            .employment_type(dto.getEmployment_type())
+                            .start_date(dto.getStart_date())
+                            .end_date(dto.getEnd_date())
+                            .description(dto.getDescription())
+                            .updated_at(ZonedDateTime.now())
+                            .build();
+
 
 
         //연관 리스트 매핑
