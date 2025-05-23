@@ -47,6 +47,7 @@ public class JoinService {
             }
             User user = JoinMapper.UsertoEntity(joinDTO);
 
+
             User savedUser = userRepository.save(user);
 
             saveEducations(joinDTO.getEducations(), savedUser);
@@ -65,7 +66,7 @@ public class JoinService {
         for (EducateRequestDTO educateDTO : educations) {
             try {
                 Education education = JoinMapper.EducationtoEntity(educateDTO, user);
-                educationRepository.save(education);
+                user.addEducation(education);
             } catch (Exception e) {
                 throw new RuntimeException("학력 정보 저장 중 오류 발생", e);
             }
