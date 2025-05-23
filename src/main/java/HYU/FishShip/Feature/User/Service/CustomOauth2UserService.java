@@ -12,6 +12,7 @@ import HYU.FishShip.Feature.User.Dto.CustomUserDetail;
 import HYU.FishShip.Feature.User.Dto.JoinRequestDTO;
 import HYU.FishShip.Feature.User.Dto.NaverUserDetails;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -32,7 +33,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     private final RefreshRepository refreshRepository;
     private final HttpServletResponse response;
 
-    public CustomOauth2UserService(UserRepository userRepository, JoinService joinService, JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository, HttpServletResponse response) {
+    public CustomOauth2UserService(UserRepository userRepository, @Lazy JoinService joinService, JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository, HttpServletResponse response) {
         this.userRepository = userRepository;
         this.joinService = joinService;
         this.jwtUtil = jwtUtil;
