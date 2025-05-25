@@ -2,6 +2,7 @@ package HYU.FishShip.Feature.User.Service;
 
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.UserRepository;
+import HYU.FishShip.Feature.User.Dto.FindUserResponseDTO;
 import HYU.FishShip.Feature.User.Dto.UserEditRequestDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
@@ -55,4 +56,17 @@ public class UserService {
         userRepository.delete(user);
 
     }
+
+    public FindUserResponseDTO getUserInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다."));
+
+        return FindUserResponseDTO.builder()
+                .loginId(user.getLoginId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .build();
+    }
+
 }

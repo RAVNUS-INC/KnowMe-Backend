@@ -1,5 +1,6 @@
 package HYU.FishShip.Feature.User.Controller;
 
+import HYU.FishShip.Feature.User.Dto.FindUserResponseDTO;
 import HYU.FishShip.Feature.User.Dto.UserDeleteResponseDTO;
 import HYU.FishShip.Feature.User.Dto.UserEditRequestDTO;
 import HYU.FishShip.Feature.User.Dto.UserEditResponseDTO;
@@ -62,6 +63,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     new UserDeleteResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류", null));
         }
+
+    }
+
+    @GetMapping("/{userId}")
+    private ResponseEntity<FindUserResponseDTO> getUserInfo(@PathVariable Long userId) {
+
+        FindUserResponseDTO userInfo = userService.getUserInfo(userId);
+        userInfo.setStatus(HttpStatus.OK);
+        userInfo.setMessage("회원 정보 조회 성공");
+        return ResponseEntity.ok(userInfo);
 
     }
 }
