@@ -46,4 +46,13 @@ public class UserService {
             throw new RuntimeException("사용자 정보 수정 중 오류가 발생했습니다: " + e.getMessage(), e);
         }
     }
+
+    @Transactional
+    public void deleteUser(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다."));
+
+        userRepository.delete(user);
+
+    }
 }
