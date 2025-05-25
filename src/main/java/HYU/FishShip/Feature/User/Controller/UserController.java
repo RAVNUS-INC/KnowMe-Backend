@@ -65,7 +65,13 @@ public class UserController {
         }
 
     }
-
+    
+    @Operation(summary = "회원 정보 조회", description = "회원정보 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping("/{userId}")
     private ResponseEntity<FindUserResponseDTO> getUserInfo(@PathVariable Long userId) {
 
