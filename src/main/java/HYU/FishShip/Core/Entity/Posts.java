@@ -1,3 +1,4 @@
+
 package HYU.FishShip.Core.Entity;
 
 import jakarta.persistence.*;
