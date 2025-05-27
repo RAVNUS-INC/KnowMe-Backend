@@ -17,7 +17,6 @@ public class Attachment {
     private String fileName;
 
     private String url;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Posts post;
