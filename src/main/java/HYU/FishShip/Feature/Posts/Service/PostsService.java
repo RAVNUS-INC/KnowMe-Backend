@@ -57,11 +57,11 @@ public class PostsService {
 
         //연관 리스트 매핑
         List<Requirement> newRequirements = dto.getRequirements().stream()
-                .map(r -> Requirement.builder().content(r).posts(post).build())
+                .map(r -> Requirement.builder().content(r).post(post).build())
                 .collect(Collectors.toList());
 
         List<Benefit> newBenefits = dto.getBenefits().stream()
-                .map(b -> Benefit.builder().content(b).posts(post).build())
+                .map(b -> Benefit.builder().content(b).post(post).build())
                 .collect(Collectors.toList());
 
         List<Attachment> newAttachments = dto.getAttachments().stream()

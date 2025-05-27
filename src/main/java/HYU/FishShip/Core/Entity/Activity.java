@@ -29,7 +29,7 @@ public class Activity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;  // 활동을 등록한 사용자와 연결
+    private User user;
 
     private ZonedDateTime CreatedAt;
     private ZonedDateTime UpdatedAt;

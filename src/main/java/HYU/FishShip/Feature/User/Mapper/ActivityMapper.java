@@ -13,8 +13,8 @@ public class ActivityMapper {
                 .content(activity.getContent())
                 .tags(activity.getTags())
                 .visibility(activity.getVisibility())
-                .createdAt(activity.getCreatedAt().toString())  // 날짜 필드
-                .updatedAt(activity.getUpdatedAt().toString())  // 날짜 필드
+                .createdAt(activity.getCreatedAt().toString())
+                .updatedAt(activity.getUpdatedAt().toString())
                 .build();
     }
 }

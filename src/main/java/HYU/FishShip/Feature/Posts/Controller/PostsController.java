@@ -37,7 +37,7 @@ public class PostsController {
     @DeleteMapping("/{post_id}")
     public ResponseEntity<Void> deletePost(@PathVariable("post_id") Long post_id) {
         postsService.deletePost(post_id);
-        return ResponseEntity.noContent().build(); // HTTP 204 No Content
+        return ResponseEntity.noContent().build();
     }
 
     // 전체 공고 조회
