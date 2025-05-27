@@ -7,6 +7,7 @@ import HYU.FishShip.Feature.User.Filter.CustomLogoutFilter;
 import HYU.FishShip.Feature.User.Filter.JwtFilter;
 import HYU.FishShip.Feature.User.Filter.LoginFilter;
 import HYU.FishShip.Feature.User.Handler.ExceptionHandlerFilter;
+import HYU.FishShip.Feature.User.Service.CustomOauth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,12 +31,14 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
     private final RefreshRepository refreshRepository;
+    private final CustomOauth2UserService customOauth2UserService;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
 
-    public SecurityConfig(JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository, ExceptionHandlerFilter exceptionHandlerFilter) {
+    public SecurityConfig(JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository, CustomOauth2UserService customOauth2UserService, ExceptionHandlerFilter exceptionHandlerFilter) {
         this.jwtUtil = jwtUtil;
         this.cookieUtil = cookieUtil;
         this.refreshRepository = refreshRepository;
+        this.customOauth2UserService = customOauth2UserService;
         this.exceptionHandlerFilter = exceptionHandlerFilter;
     }
 
@@ -63,6 +66,16 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
 
+        
+        /**
+         * OAuth2 로그인 로직
+         * */
+        http
+                .oauth2Login((oauth) ->
+                        oauth.userInfoEndpoint((userInfo) ->
+                        {userInfo.userService(customOauth2UserService);})
+                );
+        
         /**
          * csrf 보호 해제
          * */

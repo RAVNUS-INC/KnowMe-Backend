@@ -19,5 +19,5 @@ public class Requirement {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private Posts posts;
+    private Posts post;
 }
