@@ -3,6 +3,7 @@ package HYU.FishShip.Feature.Posts.Controller;
 
 import HYU.FishShip.Feature.Posts.Dto.PostsRequestDto;
 import HYU.FishShip.Feature.Posts.Dto.PostsResponseDto;
+import HYU.FishShip.Feature.Posts.Filter.PostFilterCriteria;
 import HYU.FishShip.Feature.Posts.Service.PostsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,105 @@ public class PostsController {
     public ResponseEntity<PostsResponseDto> getPostById(@PathVariable("post_id") Long post_id) {
         PostsResponseDto response = postsService.getPostById(post_id);
         return ResponseEntity.ok(response);
+    }
+
+    // 필터링된 공고 목록 조회
+    // 채용공고 필터링
+    @GetMapping("/employee")
+    public ResponseEntity<List<PostsResponseDto>> getRecruitmentPosts(
+            @RequestParam(required = false) String jobTitle,
+            @RequestParam(required = false) Integer experience,
+            @RequestParam(required = false) String education,
+            @RequestParam(required = false) String location) {
+
+        PostFilterCriteria criteria = new PostFilterCriteria();
+        criteria.setCategory("채용공고");
+        criteria.setJobTitle(jobTitle);
+        criteria.setExperience(experience);
+        criteria.setEducation(education);
+        criteria.setLocation(location);
+
+        List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
+
+        return ResponseEntity.ok(filteredPosts);
+    }
+
+    // 인턴공고 필터링
+    @GetMapping("/intern")
+    public ResponseEntity<List<PostsResponseDto>> getInternshipPosts(
+            @RequestParam(required = false) String jobTitle,
+            @RequestParam(required = false) Integer experience,
+            @RequestParam(required = false) String education,
+            @RequestParam(required = false) String location) {
+
+        PostFilterCriteria criteria = new PostFilterCriteria();
+        criteria.setCategory("인턴공고");
+        criteria.setJobTitle(jobTitle);
+        criteria.setExperience(experience);
+        criteria.setEducation(education);
+        criteria.setLocation(location);
+
+        List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
+
+        return ResponseEntity.ok(filteredPosts);
+    }
+
+    // 대외활동공고 필터링
+    @GetMapping("/external")
+    public ResponseEntity<List<PostsResponseDto>> getActivityPosts(
+            @RequestParam(required = false) String activityField,
+            @RequestParam(required = false) Integer activityDuration,
+            @RequestParam(required = false) String hostingOrganization,
+            @RequestParam(required = false) String location) {
+
+        PostFilterCriteria criteria = new PostFilterCriteria();
+        criteria.setCategory("대외활동");
+        criteria.setActivityField(activityField);
+        criteria.setActivityDuration(activityDuration);
+        criteria.setHostingOrganization(hostingOrganization);
+        criteria.setLocation(location);
+
+        List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
+
+        return ResponseEntity.ok(filteredPosts);
+    }
+
+    // 교육/강연공고 필터링
+    @GetMapping("/lecture")
+    public ResponseEntity<List<PostsResponseDto>> getEducationPosts(
+            @RequestParam(required = false) String activityField,
+            @RequestParam(required = false) Integer activityDuration,
+            @RequestParam(required = false) String onlineOrOffline,
+            @RequestParam(required = false) String location) {
+
+        PostFilterCriteria criteria = new PostFilterCriteria();
+        criteria.setCategory("교육/강연");
+        criteria.setActivityField(activityField);
+        criteria.setActivityDuration(activityDuration);
+        criteria.setOnlineOrOffline(onlineOrOffline);
+        criteria.setLocation(location);
+
+        List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
+
+        return ResponseEntity.ok(filteredPosts);
+    }
+
+    // 공모전공고 필터링
+    @GetMapping("/contest")
+    public ResponseEntity<List<PostsResponseDto>> getContestPosts(
+            @RequestParam(required = false) String targetAudience,
+            @RequestParam(required = false) String contestBenefits,
+            @RequestParam(required = false) String location) {
+
+        PostFilterCriteria criteria = new PostFilterCriteria();
+        criteria.setCategory("공모전");
+        criteria.setTargetAudience(targetAudience);
+        criteria.setContestBenefits(contestBenefits);
+        criteria.setLocation(location);
+
+        List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
+
+        return ResponseEntity.ok(filteredPosts);
     }
 }
 
