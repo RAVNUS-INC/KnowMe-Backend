@@ -4,6 +4,5 @@
 .vscode
 *.iml
 target/
-!target/knowme-backend.jar
 node_modules/
 .env
