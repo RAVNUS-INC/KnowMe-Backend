@@ -41,6 +41,10 @@ public class JoinController {
     public ResponseEntity<JoinResponseDTO<Long>> join(@Validated @RequestBody JoinRequestDTO joinDTO) {
         try{
             User user = joinService.saveUser(joinDTO);
+            if (user.getEducations() == null || user.getEducations().isEmpty()) {
+                return ResponseEntity.ok(new JoinResponseDTO<>(HttpStatus.OK, "회원가입 성공",
+                        user.getId(), null));
+            }
             Long educationId = educationRepository.findEducationById(user.getEducations().get(0).getId());
             return ResponseEntity.ok(new JoinResponseDTO<>(HttpStatus.OK, "회원가입 성공",
                     user.getId(), educationId));
