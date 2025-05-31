@@ -86,7 +86,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                                              String userInfoId) {
         String cleanPhone = (phone != null) ? phone.replaceAll("-", "") : "";
 
-        JoinRequestDTO joinDTO = new JoinRequestDTO(loginId, null, cleanPhone, email, name,
+        JoinRequestDTO joinDTO = new JoinRequestDTO(loginId, null, cleanPhone, email,0, name,
                 provider, userInfoId, Role.valueOf(role));
 
         User savedUser = joinService.saveUser(joinDTO);

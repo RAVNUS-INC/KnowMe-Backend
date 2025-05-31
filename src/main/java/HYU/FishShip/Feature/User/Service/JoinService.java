@@ -45,6 +45,12 @@ public class JoinService {
             if (joinDTO.getRole() == null) {
                 joinDTO.setRole(Role.ROLE_USER);
             }
+            if (joinDTO.getProvider() == null) {
+                joinDTO.setProvider("local");
+            }
+            if (joinDTO.getProviderId() == null) {
+                joinDTO.setProviderId("local");
+            }
             User user = JoinMapper.UsertoEntity(joinDTO);
 
 

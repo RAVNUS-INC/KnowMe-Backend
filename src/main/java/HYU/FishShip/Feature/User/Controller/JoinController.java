@@ -1,5 +1,6 @@
 package HYU.FishShip.Feature.User.Controller;
 
+import HYU.FishShip.Core.Entity.Education;
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.EducationRepository;
 import HYU.FishShip.Feature.User.Dto.JoinRequestDTO;
@@ -41,13 +42,18 @@ public class JoinController {
     public ResponseEntity<JoinResponseDTO<Long>> join(@Validated @RequestBody JoinRequestDTO joinDTO) {
         try{
             User user = joinService.saveUser(joinDTO);
-            Long educationId = educationRepository.findEducationById(user.getEducations().get(0).getId());
+            if (user.getEducations() == null || user.getEducations().isEmpty()) {
+                return ResponseEntity.ok(new JoinResponseDTO<>(HttpStatus.OK, "회원가입 성공",
+                        user.getId(), null));
+            }
+            Education education = educationRepository.findEducationById(user.getEducations().get(0).getId());
             return ResponseEntity.ok(new JoinResponseDTO<>(HttpStatus.OK, "회원가입 성공",
-                    user.getId(), educationId));
+                    user.getId(), education.getId()));
         } catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(new JoinResponseDTO<>(HttpStatus.BAD_REQUEST, "회원가입 도중 오류가 발생했습니다.",
                     null,null));
         } catch (Exception e){
+            log.error("회원가입 중 오류 발생: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new JoinResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류",
                     null, null));
         }

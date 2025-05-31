@@ -11,6 +11,7 @@ public class JoinMapper {
         user.setLoginId(joinDTO.getLoginId());
         user.setPassword(joinDTO.getPassword());
         user.setName(joinDTO.getName());
+        user.setGrade(joinDTO.getGrade());
         user.setEmail(joinDTO.getEmail());
         user.setPhone(joinDTO.getPhone());
         user.setRole(joinDTO.getRole());
