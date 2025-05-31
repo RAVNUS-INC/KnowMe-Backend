@@ -64,12 +64,13 @@ public class PostsController {
             @RequestParam(required = false) String education,
             @RequestParam(required = false) String location) {
 
-        PostFilterCriteria criteria = new PostFilterCriteria();
-        criteria.setCategory("채용공고");
-        criteria.setJobTitle(jobTitle);
-        criteria.setExperience(experience);
-        criteria.setEducation(education);
-        criteria.setLocation(location);
+        PostFilterCriteria criteria = PostFilterCriteria.builder()
+                .category("채용공고")
+                .jobTitle(jobTitle)
+                .experience(experience)
+                .education(education)
+                .location(location)
+                .build();
 
         List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
 
@@ -84,12 +85,13 @@ public class PostsController {
             @RequestParam(required = false) String education,
             @RequestParam(required = false) String location) {
 
-        PostFilterCriteria criteria = new PostFilterCriteria();
-        criteria.setCategory("인턴공고");
-        criteria.setJobTitle(jobTitle);
-        criteria.setExperience(experience);
-        criteria.setEducation(education);
-        criteria.setLocation(location);
+        PostFilterCriteria criteria = PostFilterCriteria.builder()
+                .category("인턴공고")
+                .jobTitle(jobTitle)
+                .experience(experience)
+                .education(education)
+                .location(location)
+                .build();
 
         List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
 
@@ -104,12 +106,13 @@ public class PostsController {
             @RequestParam(required = false) String hostingOrganization,
             @RequestParam(required = false) String location) {
 
-        PostFilterCriteria criteria = new PostFilterCriteria();
-        criteria.setCategory("대외활동");
-        criteria.setActivityField(activityField);
-        criteria.setActivityDuration(activityDuration);
-        criteria.setHostingOrganization(hostingOrganization);
-        criteria.setLocation(location);
+        PostFilterCriteria criteria = PostFilterCriteria.builder()
+                .category("대외활동")
+                .activityField(activityField)
+                .activityDuration(activityDuration)
+                .hostingOrganization(hostingOrganization)
+                .location(location)
+                .build();
 
         List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
 
@@ -124,12 +127,13 @@ public class PostsController {
             @RequestParam(required = false) String onlineOrOffline,
             @RequestParam(required = false) String location) {
 
-        PostFilterCriteria criteria = new PostFilterCriteria();
-        criteria.setCategory("교육/강연");
-        criteria.setActivityField(activityField);
-        criteria.setActivityDuration(activityDuration);
-        criteria.setOnlineOrOffline(onlineOrOffline);
-        criteria.setLocation(location);
+        PostFilterCriteria criteria = PostFilterCriteria.builder()
+                .category("교육/강연")
+                .activityField(activityField)
+                .activityDuration(activityDuration)
+                .onlineOrOffline(onlineOrOffline)
+                .location(location)
+                .build();
 
         List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
 
@@ -143,11 +147,12 @@ public class PostsController {
             @RequestParam(required = false) String contestBenefits,
             @RequestParam(required = false) String location) {
 
-        PostFilterCriteria criteria = new PostFilterCriteria();
-        criteria.setCategory("공모전");
-        criteria.setTargetAudience(targetAudience);
-        criteria.setContestBenefits(contestBenefits);
-        criteria.setLocation(location);
+        PostFilterCriteria criteria = PostFilterCriteria.builder()
+                .category("공모전")
+                .targetAudience(targetAudience)
+                .contestBenefits(contestBenefits)
+                .location(location)
+                .build();
 
         List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
 
