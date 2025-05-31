@@ -38,18 +38,15 @@ public class JoinService {
                 throw new IllegalArgumentException("중복된 아이디가 있습니다.");
             }
 
-            if (joinDTO.getProvider() == null){
+            if (joinDTO.getProvider() == null || "local".equals(joinDTO.getProvider())){
+                log.info("비밀번호 인코딩");
                 joinDTO.setPassword(passwordUtil.encodePassword(joinDTO.getPassword()));
+                joinDTO.setProvider("local");
+                joinDTO.setProviderId("localID");
             }
 
             if (joinDTO.getRole() == null) {
                 joinDTO.setRole(Role.ROLE_USER);
-            }
-            if (joinDTO.getProvider() == null) {
-                joinDTO.setProvider("local");
-            }
-            if (joinDTO.getProviderId() == null) {
-                joinDTO.setProviderId("local");
             }
             User user = JoinMapper.UsertoEntity(joinDTO);
 
