@@ -34,6 +34,8 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+    private int grade;
+
     private String provider;
 
     @Column(name = "provider_id")

@@ -18,13 +18,15 @@ public class JoinRequestDTO {
     private String email;
     private String name;
     private Role role;
+    private int grade;
     private String provider;
     private String providerId;
     private List<EducateRequestDTO> educations;
 
-    public JoinRequestDTO(String loginId, String password, String phone, String email,
+    public JoinRequestDTO(String loginId, String password, String phone, String email,int grade,
                           String name, String provider, String providerId, Role role) {
         this.role = role;
+        this.grade = grade;
         this.loginId = loginId;
         this.password = password;
         this.phone = phone;
