@@ -92,7 +92,6 @@ public class UserService {
             String newPassword = requestDTO.getPassword();
             if(user != null){
                 if(passwordEncoder.matches(newPassword, user.getPassword())){
-                    log.error("새로운 비밀번호가 현재 비밀번호와 같습니다.");
                     throw new IllegalArgumentException("새로운 비밀번호가 현재 비밀번호와 같습니다.");
                 } else {
                     user.setPassword(passwordEncoder.encode(newPassword));
@@ -100,7 +99,6 @@ public class UserService {
                     return true;
                 }
             } else {
-                log.error("해당 아이디를 가지는 유저가 없습니다.");
                 throw new IllegalArgumentException("해당 아이디를 가지는 유저가 없습니다.");
             }
         } catch (IllegalArgumentException e) {

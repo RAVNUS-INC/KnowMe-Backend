@@ -53,7 +53,6 @@ public class JoinController {
             return ResponseEntity.badRequest().body(new JoinResponseDTO<>(HttpStatus.BAD_REQUEST, "동일한 회원 Id 또는 전화번호를 가진 유저가 존재합니다.",
                     null,null));
         } catch (Exception e){
-            log.error("회원가입 중 오류 발생: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new JoinResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류",
                     null, null));
         }
