@@ -71,11 +71,10 @@ public class UserService {
     }
 
     public boolean findUserbyLoginId(String loginId) {
-        User user = userRepository.findByLoginId(loginId);
-        if (user == null){
+        if(userRepository.existsByLoginId(loginId)){
+            return true;
+        } else {
             throw new IllegalArgumentException("해당 아이디를 가지는 유저가 없습니다.");
         }
-        return true;
-
     }
 }

@@ -1,10 +1,12 @@
 package HYU.FishShip.Feature.User.Dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 @Setter
+@Getter
 public class FindUserIdResponseDTO {
 
     private String loginId;

@@ -20,12 +20,10 @@ import java.util.List;
 public class JoinService {
 
     private final UserRepository userRepository;
-    private final EducationRepository educationRepository;
     private final PasswordUtil passwordUtil;
 
-    public JoinService(UserRepository userRepository, EducationRepository educationRepository, PasswordUtil passwordUtil) {
+    public JoinService(UserRepository userRepository, PasswordUtil passwordUtil) {
         this.userRepository = userRepository;
-        this.educationRepository = educationRepository;
         this.passwordUtil = passwordUtil;
     }
 
@@ -56,6 +54,8 @@ public class JoinService {
             saveEducations(joinDTO.getEducations(), savedUser);
 
             return savedUser;
+        } catch (IllegalArgumentException illegalArgumentException){
+            throw illegalArgumentException;
         } catch (Exception e) {
             throw new RuntimeException("회원가입 중 오류 발생", e);
         }
