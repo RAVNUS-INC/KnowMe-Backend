@@ -39,14 +39,14 @@ public class JoinService {
                 throw new IllegalArgumentException("중복된 전화번호가 있습니다.");
             }
 
-            if (joinDTO.getProvider() == null || "local".equals(joinDTO.getProvider())){
-                log.info("비밀번호 인코딩");
+            if (!joinDTO.getProvider().toLowerCase().equals("naver")){
                 joinDTO.setPassword(passwordUtil.encodePassword(joinDTO.getPassword()));
                 joinDTO.setProvider("local");
                 joinDTO.setProviderId("localID");
             }
 
-            if (joinDTO.getRole() == null) {
+
+        if (joinDTO.getRole() == null) {
                 joinDTO.setRole(Role.ROLE_USER);
             }
             User user = JoinMapper.UsertoEntity(joinDTO);

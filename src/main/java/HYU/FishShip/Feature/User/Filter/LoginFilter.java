@@ -99,11 +99,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         addRefreshEntity(userId, refresh, REFRESH_TOKEN_EXPIRE_DURATION);
 
         // 응답설정
-        response.setHeader("access token", access);
-        response.addCookie(cookieUtil.createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
         response.setContentType("application/json; charset=UTF-8");
-        response.getWriter().write("{\"result\": \"login access\", \"message\": \"Authentication successful\"}");
+        response.getWriter().write("{\"result\": \"login access\", \"message\": \"Authentication successful\"}, " +
+                "access:"+access+", refresh:"+refresh);
         response.getWriter().flush();
     }
 
