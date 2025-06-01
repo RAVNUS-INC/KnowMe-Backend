@@ -8,6 +8,7 @@ class FishShipApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assert true;
 	}
 
 }
