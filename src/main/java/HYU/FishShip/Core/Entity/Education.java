@@ -13,7 +13,6 @@ public class Education {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String grade;
 
     @Column(nullable = false)
