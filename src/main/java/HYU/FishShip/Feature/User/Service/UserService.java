@@ -2,9 +2,9 @@ package HYU.FishShip.Feature.User.Service;
 
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.UserRepository;
-import HYU.FishShip.Feature.User.Dto.FindUserResponseDTO;
-import HYU.FishShip.Feature.User.Dto.UserEditRequestDTO;
+import HYU.FishShip.Feature.User.Dto.*;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -69,4 +70,39 @@ public class UserService {
                 .build();
     }
 
+    public User findUserId(FindUserIdRequestDTO requestDTO) {
+        String email = requestDTO.getEmail();
+        String phone = requestDTO.getPhone();
+        if(phone != null && email != null){
+            throw new IllegalArgumentException("이메일과 전화번호 중 하나만 제공해야 합니다.");
+        } else if (email != null) {
+            return userRepository.findByEmail(email);
+        } else if (phone != null) {
+            return userRepository.findByPhone(phone);
+        } else {
+            throw new IllegalArgumentException("이메일 또는 전화번호를 제공해야 합니다.");
+        }
+    }
+
+    @Transactional
+    public boolean editPassword(PasswordRequestDTO requestDTO){
+        try{
+            String loginId = requestDTO.getLoginId();
+            User user = userRepository.findByLoginId(loginId);
+            String newPassword = requestDTO.getPassword();
+            if(user != null){
+                if(passwordEncoder.matches(newPassword, user.getPassword())){
+                    throw new IllegalArgumentException("새로운 비밀번호가 현재 비밀번호와 같습니다.");
+                } else {
+                    user.setPassword(passwordEncoder.encode(newPassword));
+                    userRepository.save(user);
+                    return true;
+                }
+            } else {
+                throw new IllegalArgumentException("해당 아이디를 가지는 유저가 없습니다.");
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }
+    }
 }

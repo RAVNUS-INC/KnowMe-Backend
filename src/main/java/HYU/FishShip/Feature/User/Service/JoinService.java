@@ -20,22 +20,23 @@ import java.util.List;
 public class JoinService {
 
     private final UserRepository userRepository;
-    private final EducationRepository educationRepository;
     private final PasswordUtil passwordUtil;
 
-    public JoinService(UserRepository userRepository, EducationRepository educationRepository, PasswordUtil passwordUtil) {
+    public JoinService(UserRepository userRepository, PasswordUtil passwordUtil) {
         this.userRepository = userRepository;
-        this.educationRepository = educationRepository;
         this.passwordUtil = passwordUtil;
     }
 
     @Transactional
     public User saveUser(JoinRequestDTO joinDTO) {
         String loginId = joinDTO.getLoginId();
-
+        String phone = joinDTO.getPhone();
         try {
             if (userRepository.existsByLoginId(loginId)) {
                 throw new IllegalArgumentException("중복된 아이디가 있습니다.");
+            }
+            if (userRepository.existsByPhone(phone)){
+                throw new IllegalArgumentException("중복된 전화번호가 있습니다.");
             }
 
             if (joinDTO.getProvider() == null || "local".equals(joinDTO.getProvider())){
@@ -56,6 +57,8 @@ public class JoinService {
             saveEducations(joinDTO.getEducations(), savedUser);
 
             return savedUser;
+        } catch (IllegalArgumentException illegalArgumentException){
+            throw illegalArgumentException;
         } catch (Exception e) {
             throw new RuntimeException("회원가입 중 오류 발생", e);
         }

@@ -26,7 +26,7 @@ public class LoginController {
             @ApiResponse(responseCode = "401", description = "로그인 실패 (잘못된 자격 증명)"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (필수 파라미터 누락)")
     })
-    @Operation(summary = "로그인 로직 (Swagger 명세 전용)", description = "userId와 password를 포함하여 POST /login으로 요청을 보내면 기본 로그인 로직이 실행됩니다. " +
+    @Operation(summary = "로그인 로직 (Swagger 명세 전용)", description = "userId와 password를 포함하여 POST api/user/login으로 요청을 보내면 기본 로그인 로직이 실행됩니다. " +
             "이 엔드포인트는 실제 요청을 처리하지 않고 문서화를 위해 제공됩니다"+"프론트엔드 팀은 JWT 토큰을 localStorage나 sessionStorage에 저장한 뒤," +
             " 인증이 필요한 API 요청 시 Authorization: Bearer <JWT 토큰> 형식으로 요청 헤더에 포함해 보내야 합니다.")
     @PostMapping("/login")
