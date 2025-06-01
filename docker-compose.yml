@@ -95,9 +95,13 @@ services:
 
 volumes:
   chroma_data:
+    driver: local
   mysql_data:
+    driver: local
   rabbitmq_data:
+    driver: local
   minio_data:
+    driver: local
 
 networks:
   knowme-network:
