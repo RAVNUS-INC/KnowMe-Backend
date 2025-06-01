@@ -2,10 +2,7 @@ package HYU.FishShip.Feature.User.Service;
 
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.UserRepository;
-import HYU.FishShip.Feature.User.Dto.FindUserIdResponseDTO;
-import HYU.FishShip.Feature.User.Dto.FindUserResponseDTO;
-import HYU.FishShip.Feature.User.Dto.PasswordRequestDTO;
-import HYU.FishShip.Feature.User.Dto.UserEditRequestDTO;
+import HYU.FishShip.Feature.User.Dto.*;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -73,11 +70,17 @@ public class UserService {
                 .build();
     }
 
-    public boolean findUserbyLoginId(String loginId) {
-        if(userRepository.existsByLoginId(loginId)){
-            return true;
+    public User findUserId(FindUserIdRequestDTO requestDTO) {
+        String email = requestDTO.getEmail();
+        String phone = requestDTO.getPhone();
+        if(phone != null && email != null){
+            throw new IllegalArgumentException("이메일과 전화번호 중 하나만 제공해야 합니다.");
+        } else if (email != null) {
+            return userRepository.findByEmail(email);
+        } else if (phone != null) {
+            return userRepository.findByPhone(phone);
         } else {
-            throw new IllegalArgumentException("해당 아이디를 가지는 유저가 없습니다.");
+            throw new IllegalArgumentException("이메일 또는 전화번호를 제공해야 합니다.");
         }
     }
 

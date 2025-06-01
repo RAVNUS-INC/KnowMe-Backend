@@ -9,8 +9,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class FindUserIdResponseDTO {
 
-    private String loginId;
-
     @Schema(description = "응답 상태", example = "success")
     private HttpStatus status;
 
@@ -18,8 +16,7 @@ public class FindUserIdResponseDTO {
     private String message;
 
 
-    public FindUserIdResponseDTO(String loginId, HttpStatus status, String message) {
-        this.loginId = loginId;
+    public FindUserIdResponseDTO(HttpStatus status, String message) {
         this.status = status;
         this.message = message;
     }
