@@ -30,10 +30,13 @@ public class JoinService {
     @Transactional
     public User saveUser(JoinRequestDTO joinDTO) {
         String loginId = joinDTO.getLoginId();
-
+        String phone = joinDTO.getPhone();
         try {
             if (userRepository.existsByLoginId(loginId)) {
                 throw new IllegalArgumentException("중복된 아이디가 있습니다.");
+            }
+            if (userRepository.existsByPhone(phone)){
+                throw new IllegalArgumentException("중복된 전화번호가 있습니다.");
             }
 
             if (joinDTO.getProvider() == null || "local".equals(joinDTO.getProvider())){
