@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("api/user")
 public class UserController {
     private final UserService userService;
 
@@ -103,6 +103,29 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     new FindUserIdResponseDTO(null, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류"));
+        }
+    }
+    @Operation(summary = "비밀번호 수정", description = "비밀번호 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "동일 비밀번호 입력"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @PutMapping("/editPassword")
+    private ResponseEntity<PasswordEditResponseDTO> editPassword(@RequestBody PasswordRequestDTO requestDTO) {
+        try {
+            if (userService.editPassword(requestDTO)) {
+                return ResponseEntity.ok(new PasswordEditResponseDTO(HttpStatus.OK, "비밀번호 수정 성공"));
+            } else {
+                return ResponseEntity.badRequest().body(new PasswordEditResponseDTO(HttpStatus.BAD_REQUEST,
+                        "비밀번호 수정 도중 오류가 발생했습니다."));
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new PasswordEditResponseDTO(HttpStatus.BAD_REQUEST,
+                    "수정하려는 비밀번호가 기존과 동일합니다."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new PasswordEditResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류"));
         }
     }
 }
