@@ -1,9 +1,6 @@
 package HYU.FishShip.Feature.User.Controller;
 
-import HYU.FishShip.Feature.User.Dto.FindUserResponseDTO;
-import HYU.FishShip.Feature.User.Dto.UserDeleteResponseDTO;
-import HYU.FishShip.Feature.User.Dto.UserEditRequestDTO;
-import HYU.FishShip.Feature.User.Dto.UserEditResponseDTO;
+import HYU.FishShip.Feature.User.Dto.*;
 import HYU.FishShip.Feature.User.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -80,5 +77,32 @@ public class UserController {
         userInfo.setMessage("회원 정보 조회 성공");
         return ResponseEntity.ok(userInfo);
 
+    }
+
+    @Operation(summary = "회원 ID 조회", description = "로그인 ID를 통해 회원 ID를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 ID 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "해당 회원 ID를 찾을 수 없음"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @PostMapping("/findId")
+    private ResponseEntity<FindUserIdResponseDTO> checkUserId(@RequestBody FindUserIdRequestDTO requestDTO) {
+        try {
+            String loginId = requestDTO.getLoginId();
+            if(userService.findUserbyLoginId(loginId)){
+                return ResponseEntity.ok(new FindUserIdResponseDTO(loginId, HttpStatus.OK, "회원 ID 조회 성공"));
+            } else {
+                FindUserIdResponseDTO response = new FindUserIdResponseDTO(null, HttpStatus.NOT_FOUND,
+                        "해당 회원 ID를 찾을 수 없습니다.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new FindUserIdResponseDTO(null, HttpStatus.BAD_REQUEST,
+                    "회원 ID 조회 도중 오류가 발생했습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new FindUserIdResponseDTO(null, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류"));
+        }
     }
 }

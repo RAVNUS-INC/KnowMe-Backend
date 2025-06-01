@@ -2,6 +2,7 @@ package HYU.FishShip.Feature.User.Service;
 
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.UserRepository;
+import HYU.FishShip.Feature.User.Dto.FindUserIdResponseDTO;
 import HYU.FishShip.Feature.User.Dto.FindUserResponseDTO;
 import HYU.FishShip.Feature.User.Dto.UserEditRequestDTO;
 import jakarta.transaction.Transactional;
@@ -69,4 +70,12 @@ public class UserService {
                 .build();
     }
 
+    public boolean findUserbyLoginId(String loginId) {
+        User user = userRepository.findByLoginId(loginId);
+        if (user == null){
+            throw new IllegalArgumentException("해당 아이디를 가지는 유저가 없습니다.");
+        }
+        return true;
+
+    }
 }
