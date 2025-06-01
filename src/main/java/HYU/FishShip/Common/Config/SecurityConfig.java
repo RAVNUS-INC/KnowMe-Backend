@@ -1,8 +1,6 @@
 package HYU.FishShip.Common.Config;
 
-import HYU.FishShip.Common.Utils.CookieUtil;
 import HYU.FishShip.Common.Utils.JwtUtil;
-import HYU.FishShip.Core.Repository.RefreshRepository;
 import HYU.FishShip.Feature.User.Filter.CustomLogoutFilter;
 import HYU.FishShip.Feature.User.Filter.JwtFilter;
 import HYU.FishShip.Feature.User.Filter.LoginFilter;
@@ -29,15 +27,12 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
-    private final CookieUtil cookieUtil;
-    private final RefreshRepository refreshRepository;
     private final CustomOauth2UserService customOauth2UserService;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
 
-    public SecurityConfig(JwtUtil jwtUtil, CookieUtil cookieUtil, RefreshRepository refreshRepository, CustomOauth2UserService customOauth2UserService, ExceptionHandlerFilter exceptionHandlerFilter) {
+    public SecurityConfig(JwtUtil jwtUtil,CustomOauth2UserService customOauth2UserService,
+                          ExceptionHandlerFilter exceptionHandlerFilter) {
         this.jwtUtil = jwtUtil;
-        this.cookieUtil = cookieUtil;
-        this.refreshRepository = refreshRepository;
         this.customOauth2UserService = customOauth2UserService;
         this.exceptionHandlerFilter = exceptionHandlerFilter;
     }
@@ -93,10 +88,10 @@ public class SecurityConfig {
         http.
                 addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         http
-                .addFilterAt(new LoginFilter(authenticationManager,jwtUtil, cookieUtil,refreshRepository),
+                .addFilterAt(new LoginFilter(authenticationManager,jwtUtil),
                         UsernamePasswordAuthenticationFilter.class);
         http
-                .addFilterAt(new CustomLogoutFilter(refreshRepository), LogoutFilter.class);
+                .addFilterAt(new CustomLogoutFilter(), LogoutFilter.class);
 
         /**
          * cors 관련 설정
