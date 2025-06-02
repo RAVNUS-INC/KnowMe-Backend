@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -156,6 +157,16 @@ public class PostsController {
 
         List<PostsResponseDto> filteredPosts = postsService.getFilteredPosts(criteria);
 
+        return ResponseEntity.ok(filteredPosts);
+    }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<List<PostsResponseDto>> searchPosts(@RequestParam String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+        List<PostsResponseDto> filteredPosts = postsService.getPostsByKeyword(keyword);
         return ResponseEntity.ok(filteredPosts);
     }
 }
