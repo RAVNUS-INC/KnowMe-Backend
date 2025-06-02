@@ -42,27 +42,26 @@ public class PostsService {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 공고가 존재하지 않습니다."));
 
-                    Posts.builder()
-                            .category(dto.getCategory())
-                            .title(dto.getTitle())
-                            .company(dto.getCompany())
-                            .location(dto.getLocation())
-                            .employment_type(dto.getEmployment_type())
-                            .start_date(dto.getStart_date())
-                            .end_date(dto.getEnd_date())
-                            .description(dto.getDescription())
-                            .updated_at(ZonedDateTime.now())
-                            .jobTitle(dto.getJobTitle())  // 직무
-                            .experience(dto.getExperience())  // 경력
-                            .education(dto.getEducation())  // 학력
-                            .activityField(dto.getActivityField())  // 분야
-                            .activityDuration(dto.getActivityDuration())  // 활동 기간
-                            .hostingOrganization(dto.getHostingOrganization())  // 주최기관
-                            .onlineOrOffline(dto.getOnlineOrOffline())  // 온/오프라인 여부
-                            .targetAudience(dto.getTargetAudience())  // 대상
-                            .contestBenefits(dto.getContestBenefits())
-                            .build();
-
+        Posts.builder()
+                .category(dto.getCategory())
+                .title(dto.getTitle())
+                .company(dto.getCompany())
+                .location(dto.getLocation())
+                .employment_type(dto.getEmployment_type())
+                .start_date(dto.getStart_date())
+                .end_date(dto.getEnd_date())
+                .description(dto.getDescription())
+                .updated_at(ZonedDateTime.now())
+                .jobTitle(dto.getJobTitle())  // 직무
+                .experience(dto.getExperience())  // 경력
+                .education(dto.getEducation())  // 학력
+                .activityField(dto.getActivityField())  // 분야
+                .activityDuration(dto.getActivityDuration())  // 활동 기간
+                .hostingOrganization(dto.getHostingOrganization())  // 주최기관
+                .onlineOrOffline(dto.getOnlineOrOffline())  // 온/오프라인 여부
+                .targetAudience(dto.getTargetAudience())  // 대상
+                .contestBenefits(dto.getContestBenefits())
+                .build();
 
 
         //연관 리스트 매핑
@@ -134,6 +133,14 @@ public class PostsService {
                 criteria.getLocation()
         );
         return filteredPosts.stream()
+                .map(PostsMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    // 검색어로 필터링된 공고 목록 조회
+    public List<PostsResponseDto> getPostsByKeyword(String keyword) {
+        List<Posts> postsList = postsRepository.findByKeyword(keyword);
+        return postsList.stream()
                 .map(PostsMapper::toDto)
                 .collect(Collectors.toList());
     }
