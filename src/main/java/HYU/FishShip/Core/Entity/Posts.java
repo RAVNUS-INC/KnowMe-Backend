@@ -1,6 +1,7 @@
 
 package HYU.FishShip.Core.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"requirements", "benefits", "attachments"})
 public class Posts {
 
     @Id
