@@ -115,16 +115,33 @@ public class UserController {
         try {
             if (userService.editPassword(requestDTO)) {
                 return ResponseEntity.ok(new PasswordEditResponseDTO(HttpStatus.OK, "비밀번호 수정 성공"));
-            } else {
-                return ResponseEntity.badRequest().body(new PasswordEditResponseDTO(HttpStatus.BAD_REQUEST,
-                        "비밀번호 수정 도중 오류가 발생했습니다."));
             }
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new PasswordEditResponseDTO(HttpStatus.BAD_REQUEST,
-                    "수정하려는 비밀번호가 기존과 동일합니다."));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new PasswordEditResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류"));
+            if ("새로운 비밀번호가 현재 비밀번호와 같습니다.".equals(e.getMessage())) {
+                return ResponseEntity.badRequest().body(new PasswordEditResponseDTO(HttpStatus.BAD_REQUEST,
+                        "수정하려는 비밀번호가 기존과 동일합니다."));
+            } else if ("해당 아이디를 가지는 유저가 없습니다.".equals(e.getMessage())) {
+                return ResponseEntity.badRequest().body(new PasswordEditResponseDTO(HttpStatus.BAD_REQUEST,
+                        "해당 아이디가 존재하지 않습니다."));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new PasswordEditResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류"));
+    }
+
+    @Operation(summary = "사용자 존재 여부 확인", description = "로그인 ID를 통해 사용자가 존재하는지 확인합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용자 존재 여부 확인 성공"),
+            @ApiResponse(responseCode = "404", description = "사용자 존재하지 않음."),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @PostMapping("/checkUserExists")
+    public ResponseEntity<ExistsUserResponseDTO> checkUserExists(@RequestBody ExistisUserRequestDTO requestDTO) {
+        String loginId = requestDTO.getLoginId();
+        if (userRepository.existsByLoginId(loginId)) {
+            return ResponseEntity.ok(new ExistsUserResponseDTO(true, HttpStatus.OK, "사용자가 존재합니다."));
+        } else {
+            return ResponseEntity.badRequest().body(
+                    new ExistsUserResponseDTO(false, HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다."));
         }
     }
 }

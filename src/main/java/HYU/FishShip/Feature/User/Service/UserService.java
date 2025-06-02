@@ -91,6 +91,7 @@ public class UserService {
             User user = userRepository.findByLoginId(loginId);
             String newPassword = requestDTO.getPassword();
             if(user != null){
+
                 if(passwordEncoder.matches(newPassword, user.getPassword())){
                     throw new IllegalArgumentException("새로운 비밀번호가 현재 비밀번호와 같습니다.");
                 } else {
