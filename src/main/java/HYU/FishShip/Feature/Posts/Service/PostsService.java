@@ -1,10 +1,10 @@
 package HYU.FishShip.Feature.Posts.Service;
 
 
-import HYU.FishShip.Core.Entity.Attachment;
-import HYU.FishShip.Core.Entity.Benefit;
+//import HYU.FishShip.Core.Entity.Attachment;
+//import HYU.FishShip.Core.Entity.Benefit;
 import HYU.FishShip.Core.Entity.Posts;
-import HYU.FishShip.Core.Entity.Requirement;
+//import HYU.FishShip.Core.Entity.Requirement;
 import HYU.FishShip.Core.Repository.PostsRepository;
 import HYU.FishShip.Feature.Posts.Dto.PostsMapper;
 import HYU.FishShip.Feature.Posts.Dto.PostsRequestDto;
@@ -47,10 +47,9 @@ public class PostsService {
                 .title(dto.getTitle())
                 .company(dto.getCompany())
                 .location(dto.getLocation())
-                .employment_type(dto.getEmployment_type())
-                .start_date(dto.getStart_date())
-                .end_date(dto.getEnd_date())
-                .description(dto.getDescription())
+                .company_intro(dto.getCompany_intro())
+                .external_intro(dto.getExternal_intro())
+                .content(dto.getContent())
                 .updated_at(ZonedDateTime.now())
                 .jobTitle(dto.getJobTitle())  // 직무
                 .experience(dto.getExperience())  // 경력
@@ -63,30 +62,6 @@ public class PostsService {
                 .contestBenefits(dto.getContestBenefits())
                 .build();
 
-
-        //연관 리스트 매핑
-        List<Requirement> newRequirements = dto.getRequirements().stream()
-                .map(r -> Requirement.builder().content(r).post(post).build())
-                .collect(Collectors.toList());
-
-        List<Benefit> newBenefits = dto.getBenefits().stream()
-                .map(b -> Benefit.builder().content(b).post(post).build())
-                .collect(Collectors.toList());
-
-        List<Attachment> newAttachments = dto.getAttachments().stream()
-                .map(a -> Attachment.builder().fileName(a.getFileName()).url(a.getUrl()).build())
-                .collect(Collectors.toList());
-
-
-        // 기존 리스트 초기화 후 새 요소 추가
-        post.getRequirements().clear();
-        post.getRequirements().addAll(newRequirements);
-
-        post.getBenefits().clear();
-        post.getBenefits().addAll(newBenefits);
-
-        post.getAttachments().clear();
-        post.getAttachments().addAll(newAttachments);
 
 
         Posts updated = postsRepository.save(post);
@@ -107,7 +82,7 @@ public class PostsService {
 
         return postsList.stream()
                 .map(PostsMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // 공고 상세 조회
@@ -134,7 +109,7 @@ public class PostsService {
         );
         return filteredPosts.stream()
                 .map(PostsMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // 검색어로 필터링된 공고 목록 조회
@@ -142,6 +117,6 @@ public class PostsService {
         List<Posts> postsList = postsRepository.findByKeyword(keyword);
         return postsList.stream()
                 .map(PostsMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
