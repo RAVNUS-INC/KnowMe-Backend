@@ -29,6 +29,7 @@ public class Posts {
 
     private String company_intro;
     private String external_intro;
+    @Column(columnDefinition =  "TEXT")
     private String content;
     private String image;
     private String location;
