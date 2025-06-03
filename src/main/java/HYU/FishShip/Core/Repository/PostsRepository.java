@@ -14,7 +14,7 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     // 필터링된 게시물 조회 (채용공고, 인턴공고, 대외활동 등)
     @Query("SELECT p FROM Posts p WHERE " +
             "(COALESCE(:category, '') = '' OR p.category = :category) AND " +
-            "(COALESCE(:jobTitle, '') = '' OR p.jobTitle LIKE %:jobTitle%) AND " +
+            "(COALESCE(:role, '') = '' OR p.content.recruitment_part.role LIKE %:role%) AND " +
             "(COALESCE(:experience, -1) = -1 OR p.experience = :experience) AND " +
             "(COALESCE(:education, '') = '' OR p.education LIKE %:education%) AND " +
             "(COALESCE(:activityField, '') = '' OR p.activityField LIKE %:activityField%) AND " +
@@ -23,10 +23,10 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
             "(COALESCE(:onlineOrOffline, '') = '' OR p.onlineOrOffline LIKE %:onlineOrOffline%) AND " +
             "(COALESCE(:targetAudience, '') = '' OR p.targetAudience LIKE %:targetAudience%) AND " +
             "(COALESCE(:contestBenefits, '') = '' OR p.contestBenefits LIKE %:contestBenefits%) AND" +
-            "(COALESCE(:location, '') = '' OR p.location LIKE %:location%)")
+            "(COALESCE(:location, '') = '' OR p.content.work_conditions.location LIKE %:location%)")
     List<Posts> findByFilters(
             @Param("category") String category,
-            @Param("jobTitle") String jobTitle,
+            @Param("role") String role,
             @Param("experience") Integer experience,
             @Param("education") String education,
             @Param("activityField") String activityField,
@@ -38,7 +38,7 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
             @Param("location") String location
     );
 
-    @Query("SELECT p FROM Posts p WHERE p.title LIKE %:keyword% OR p.description LIKE %:keyword%")
+    @Query("SELECT p FROM Posts p WHERE p.title LIKE %:keyword% OR p.content.recruitment_part.role LIKE %:keyword%")
     List<Posts> findByKeyword(@Param("keyword") String keyword);
 
 }

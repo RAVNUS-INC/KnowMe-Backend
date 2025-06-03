@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class PostFilterCriteria {
     private String category;
-    private String jobTitle;
+    private String role;
     private Integer experience;
     private String education;
     private String activityField;

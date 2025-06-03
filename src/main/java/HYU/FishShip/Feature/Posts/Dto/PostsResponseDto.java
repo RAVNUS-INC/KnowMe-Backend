@@ -2,9 +2,7 @@ package HYU.FishShip.Feature.Posts.Dto;
 
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.List;
+
 
 @Getter
 @Setter
@@ -16,17 +14,22 @@ public class PostsResponseDto {
     private String category;
     private String title;
     private String company;
-    private String location;
-    private String employment_type;
-    private ApplicationPeriod applicationPeriod;
-    private String description;
-    private List<String> requirements;
-    private List<String> benefits;
-    private List<AttachmentDto> attachments;
-    private ZonedDateTime created_at;
-    private ZonedDateTime updated_at;
+    private String company_intro;
 
-    private String jobTitle;    // 직무
+    private String role; // 직무
+    private String job_responsibilities; // 담당 업무
+    private String qualifications; // 자격 요건
+    private String preferred_skills; // 우대 사항
+
+    private String employment_type; // 고용 형태
+    private String work_type; // 근무 형태
+    private String location; // 근무지
+
+    private String benefits; // 복지
+    private String recruitment_process; // 전형 절차
+    private String application_method; // 지원 방법
+    private String image; // 이미지 URL
+
     private Integer experience; // 경력 (1년 단위)
     private String education;   // 학력 (초대졸, 고졸, 대졸, 석사/박사, 학력무관)
 
@@ -38,22 +41,8 @@ public class PostsResponseDto {
     private String targetAudience;     // 대상 (대학생, 일반인, 제한없음)
     private String contestBenefits;    // 공모전 혜택 (상금, 상장, 상용화 등)
 
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ApplicationPeriod {
-        private LocalDate start_date;
-        private LocalDate end_date;
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AttachmentDto {
-        private String fileName;
-        private String url;
-    }
+    private String external_intro;
+    private String external_info;
+    private String external_location;
+    private String external_time;
 }

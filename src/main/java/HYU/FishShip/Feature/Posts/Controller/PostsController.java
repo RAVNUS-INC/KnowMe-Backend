@@ -60,14 +60,14 @@ public class PostsController {
     // 채용공고 필터링
     @GetMapping("/employee")
     public ResponseEntity<List<PostsResponseDto>> getRecruitmentPosts(
-            @RequestParam(required = false) String jobTitle,
+            @RequestParam(required = false) String role,
             @RequestParam(required = false) Integer experience,
             @RequestParam(required = false) String education,
             @RequestParam(required = false) String location) {
 
         PostFilterCriteria criteria = PostFilterCriteria.builder()
                 .category("채용공고")
-                .jobTitle(jobTitle)
+                .role(role)
                 .experience(experience)
                 .education(education)
                 .location(location)
@@ -81,14 +81,14 @@ public class PostsController {
     // 인턴공고 필터링
     @GetMapping("/intern")
     public ResponseEntity<List<PostsResponseDto>> getInternshipPosts(
-            @RequestParam(required = false) String jobTitle,
+            @RequestParam(required = false) String role,
             @RequestParam(required = false) Integer experience,
             @RequestParam(required = false) String education,
             @RequestParam(required = false) String location) {
 
         PostFilterCriteria criteria = PostFilterCriteria.builder()
                 .category("인턴공고")
-                .jobTitle(jobTitle)
+                .role(role)
                 .experience(experience)
                 .education(education)
                 .location(location)

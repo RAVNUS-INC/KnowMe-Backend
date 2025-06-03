@@ -1,13 +1,10 @@
 
 package HYU.FishShip.Core.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.List;
+
 
 @Entity
 @Getter
@@ -15,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonIgnoreProperties({"requirements", "benefits", "attachments"})
 public class Posts {
 
     @Id
@@ -26,19 +22,28 @@ public class Posts {
 
     private String title;
     private String company;
-    private String location;
-    private String employment_type;
+    private String company_intro;
+    private String external_intro;
 
-    private LocalDate start_date;
-    private LocalDate end_date;
+    @Embedded
+    private Content content;
 
-    private String description;
 
-    private ZonedDateTime created_at;
-    private ZonedDateTime updated_at;
+
+
+
+
+
+//    private LocalDate start_date;
+//    private LocalDate end_date;
+
+//    private String description;
+
+//    private ZonedDateTime created_at;
+//    private ZonedDateTime updated_at;
 
     // 채용공고, 인턴공고 필터링 필드
-    private String jobTitle;    // 직무
+//    private String role; // 직무
     private Integer experience; // 경력 (1년 단위)
     private String education;   // 학력 (초대졸, 고졸, 대졸, 석사/박사, 학력무관)
 
@@ -54,15 +59,4 @@ public class Posts {
     private String targetAudience; // 대상 (대학생, 일반인, 제한없음)
     private String contestBenefits; // 공모전 혜택 (상금, 상장, 상용화 등)
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "post_id")
-    private List<Requirement> requirements;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "post_id")
-    private List<Benefit> benefits;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "post_id")
-    private List<Attachment> attachments;
 }
