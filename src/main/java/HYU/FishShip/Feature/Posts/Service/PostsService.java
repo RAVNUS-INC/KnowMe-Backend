@@ -50,10 +50,6 @@ public class PostsService {
                 .company_intro(dto.getCompany_intro())
                 .external_intro(dto.getExternal_intro())
                 .content(dto.getContent())
-                // .employment_type(dto.getEmployment_type())
-                // .start_date(dto.getStart_date())
-                // .end_date(dto.getEnd_date())
-                // .description(dto.getDescription())
                 .updated_at(ZonedDateTime.now())
                 .jobTitle(dto.getJobTitle())  // 직무
                 .experience(dto.getExperience())  // 경력

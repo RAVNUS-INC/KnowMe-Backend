@@ -33,12 +33,6 @@ public class Posts {
     private String content;
     private String image;
     private String location;
-//    private String employment_type;
-
-//    private LocalDate start_date;
-//    private LocalDate end_date;
-
-//    private String description;
 
     private ZonedDateTime created_at;
     private ZonedDateTime updated_at;
@@ -59,16 +53,4 @@ public class Posts {
     // 공모전 필터링 필드
     private String targetAudience; // 대상 (대학생, 일반인, 제한없음)
     private String contestBenefits; // 공모전 혜택 (상금, 상장, 상용화 등)
-
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "post_id")
-//    private List<Requirement> requirements;
-//
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "post_id")
-//    private List<Benefit> benefits;
-//
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "post_id")
-//    private List<Attachment> attachments;
 }
