@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import HYU.FishShip.Feature.AI.Dto.AIAnalysisResultResponseDto;
+import HYU.FishShip.Feature.AI.Dto.AIAnalysisResult;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ public class AIAnalysisService {
     private final AIAnalysisRepository aiAnalysisRepository;
     private final UserRepository userRepository;
     private final ActivityRepository activityRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * 포트폴리오 분석 요청
@@ -68,123 +72,31 @@ public class AIAnalysisService {
         parameters.put("educations", user.getEducations());
 
         // RabbitMQ로 분석 작업 전송
-        submitAIWork("ANALYZE", savedAnalysis.getId(), userId, parameters);
-
-        return Pair.of(savedAnalysis.getId(), activityCount);
-    }
-
-    /**
-     * 채용공고 추천 요청
-     */
-    @Transactional
-    public Pair<Long, Integer> requestJobRecommendation(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
-
-        // AIAnalysis 엔티티 생성
-        AIAnalysis analysis = AIAnalysis.builder()
-                .analysis_type("채용공고 추천")
-                .created_at(LocalDateTime.now())
-                .user(user)
-                .build();
-
-        AIAnalysis savedAnalysis = aiAnalysisRepository.save(analysis);
-
-        // 사용자의 활동 데이터 수집
-        List<Activity> activities = activityRepository.findByUserId(userId);
-        int activityCount = activities.size();
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("analysisId", savedAnalysis.getId());
-        parameters.put("userId", userId);
-        parameters.put("activities", activities.stream()
-                .map(activity -> {
-                    Map<String, Object> activityData = new HashMap<>();
-                    activityData.put("title", activity.getTitle());
-                    activityData.put("description", activity.getDescription());
-                    activityData.put("content", activity.getContent());
-                    activityData.put("tags", activity.getTags());
-                    return activityData;
-                })
-                .toList());
-
-        // 사용자의 교육, 프로젝트, 경력 정보도 추가
-        parameters.put("educations", user.getEducations());
-        parameters.put("projects", user.getProjects());
-        parameters.put("experiences", user.getExperiences());
-
-        // RabbitMQ로 추천 작업 전송
-        submitAIWork("RECOMMEND_POST", savedAnalysis.getId(), userId, parameters);
-
-        return Pair.of(savedAnalysis.getId(), activityCount);
-    }
-
-    /**
-     * 대외활동 추천 요청
-     */
-    @Transactional
-    public Pair<Long, Integer> requestExternalActivityRecommendation(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
-
-        // AIAnalysis 엔티티 생성
-        AIAnalysis analysis = AIAnalysis.builder()
-                .analysis_type("대외활동 추천")
-                .created_at(LocalDateTime.now())
-                .user(user)
-                .build();
-
-        AIAnalysis savedAnalysis = aiAnalysisRepository.save(analysis);
-
-        // 사용자의 활동 데이터 수집
-        List<Activity> activities = activityRepository.findByUserId(userId);
-        int activityCount = activities.size();
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("analysisId", savedAnalysis.getId());
-        parameters.put("userId", userId);
-        parameters.put("activities", activities.stream()
-                .map(activity -> {
-                    Map<String, Object> activityData = new HashMap<>();
-                    activityData.put("title", activity.getTitle());
-                    activityData.put("description", activity.getDescription());
-                    activityData.put("content", activity.getContent());
-                    activityData.put("tags", activity.getTags());
-                    return activityData;
-                })
-                .toList());
-
-        // 사용자의 교육, 프로젝트, 경력 정보도 추가
-        parameters.put("educations", user.getEducations());
-        parameters.put("projects", user.getProjects());
-        parameters.put("experiences", user.getExperiences());
-
-        // RabbitMQ로 추천 작업 전송
-        submitAIWork("RECOMMEND_EXTERNAL", savedAnalysis.getId(), userId, parameters);
+        submitAIWork("ANALYZE", userId, savedAnalysis.getId(), parameters);
 
         return Pair.of(savedAnalysis.getId(), activityCount);
     }
 
     @Transactional
-    public AIAnalysisResultResponseDto getAnalysis(Long analysisId) {
+    public AIAnalysisResultResponseDto getAnalysis(Long analysisId) throws JsonProcessingException {
         AIAnalysis analysis = aiAnalysisRepository.findById(analysisId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 분석이 존재하지 않습니다."));
 
-        return AIAnalysisResultResponseDto.builder()
-                .resultSummary(analysis.getResult_summary())
-                .build();
+
+
+        return objectMapper.readValue(analysis.getResult(), AIAnalysisResultResponseDto.class);
     }
 
     /**
      * AI 분석 결과 업데이트 (RabbitMQ 리스너에서 호출)
      */
     @Transactional
-    public void updateAnalysisResult(Long analysisId, String resultSummary) {
+    public void updateAnalysisResult(Long analysisId, AIAnalysisResult.Result result) throws JsonProcessingException {
         AIAnalysis analysis = aiAnalysisRepository.findById(analysisId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 분석이 존재하지 않습니다."));
 
         analysis.setCompleted_at(LocalDateTime.now());
-        analysis.setResult_summary(resultSummary);
+        analysis.setResult(objectMapper.writeValueAsString(result));
         aiAnalysisRepository.save(analysis);
     }
 

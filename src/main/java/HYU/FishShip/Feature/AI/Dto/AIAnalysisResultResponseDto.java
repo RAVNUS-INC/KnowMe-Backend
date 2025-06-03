@@ -10,7 +10,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class AIAnalysisResultResponseDto {
-    private String resultSummary; // AI 분석 결과 요약
+    private String strength;
+    private String weakness;
+    private String summary;
+    private String recommendPosition;
 }

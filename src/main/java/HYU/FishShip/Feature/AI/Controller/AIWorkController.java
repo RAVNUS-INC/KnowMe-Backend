@@ -48,47 +48,9 @@ public class AIWorkController {
             AIAnalysisResultResponseDto result = aiAnalysisService.getAnalysis(analysisId);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
+            log.info(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
     }
 
-    @PostMapping("/recommend/jobs")
-    @Operation(summary = "채용공고 추천", description = "사용자에게 맞는 채용공고를 추천하고 분석 ID를 반환합니다.")
-    public ResponseEntity<AIAnalysisResponseDto> recommendJobs(@RequestBody AIAnalysisRequestDto aiAnalysisRequestDto) {
-        try {
-            Pair<Long, Integer> result = aiAnalysisService.requestJobRecommendation(aiAnalysisRequestDto.getUserId());
-            AIAnalysisResponseDto response = AIAnalysisResponseDto.builder()
-                    .analysisId(result.getFirst())
-                    .activitiesCount(result.getSecond())
-                    .message("채용공고 추천 요청이 성공적으로 처리되었습니다.")
-                    .build();
-            
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            AIAnalysisResponseDto response = AIAnalysisResponseDto.builder()
-                    .message("채용공고 추천 요청에 실패했습니다: " + e.getMessage())
-                    .build();
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
-
-    @PostMapping("/recommend/external-activities")
-    @Operation(summary = "대외활동 추천", description = "사용자에게 맞는 대외활동을 추천하고 분석 ID를 반환합니다.")
-    public ResponseEntity<AIAnalysisResponseDto> recommendExternalActivities(@RequestBody AIAnalysisRequestDto aiAnalysisRequestDto) {
-        try {
-            Pair<Long, Integer> result = aiAnalysisService.requestExternalActivityRecommendation(aiAnalysisRequestDto.getUserId());
-            AIAnalysisResponseDto response = AIAnalysisResponseDto.builder()
-                    .analysisId(result.getFirst())
-                    .activitiesCount(result.getSecond())
-                    .message("대외활동 추천 요청이 성공적으로 처리되었습니다.")
-                    .build();
-    
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            AIAnalysisResponseDto response = AIAnalysisResponseDto.builder()
-                    .message("대외활동 추천 요청에 실패했습니다: " + e.getMessage())
-                    .build();
-            return ResponseEntity.badRequest().body(response);
-        } 
-    }
 }

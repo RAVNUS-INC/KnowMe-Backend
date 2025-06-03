@@ -34,7 +34,7 @@ public class AIAnalysis{
     private LocalDateTime completed_at; // 완료 시간
 
     @Lob
-    private String result_summary;
+    private String result; // 분석 결과 (JSON 형태로 저장)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",nullable = false)
