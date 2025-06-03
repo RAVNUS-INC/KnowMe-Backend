@@ -2,6 +2,8 @@ package HYU.FishShip.Core.Entity;
 
 import java.time.LocalDateTime;
 
+import HYU.FishShip.Feature.AI.Dto.AIAnalysisResponseDto;
+import HYU.FishShip.Feature.AI.Dto.AIAnalysisResultResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/ai")
 @RequiredArgsConstructor
@@ -53,4 +55,15 @@ public class AIWorkController {
         }
     }
 
+    @GetMapping("/analyses/{userId}")
+    @Operation(summary = "모든 포트폴리오 분석 결과 조회", description = "모든 포트폴리오 분석 결과를 조회합니다.")
+    public ResponseEntity<List<AIAnalysisResultResponseDto>> getAllPortfolioAnalysisResults(@PathVariable Long userId) {
+        try {
+            List<AIAnalysisResultResponseDto> result = aiAnalysisService.getAllAnalysis(userId);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 }

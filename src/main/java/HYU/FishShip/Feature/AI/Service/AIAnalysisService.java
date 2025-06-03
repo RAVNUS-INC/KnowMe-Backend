@@ -89,6 +89,29 @@ public class AIAnalysisService {
         return objectMapper.readValue(analysis.getResult(), AIAnalysisResultResponseDto.class);
     }
 
+    @Transactional
+    public List<AIAnalysisResultResponseDto> getAllAnalysis(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+        List<AIAnalysis> analyses = aiAnalysisRepository.findAIAnalysisByUser(user);
+        if (analyses.isEmpty()) {
+            throw new IllegalArgumentException("해당 사용자의 분석 결과가 존재하지 않습니다.");
+        }
+        return analyses.stream()
+                .filter(analysis -> analysis.getResult() != null)
+                .map(
+                    analysis -> {
+                        try {
+                            return objectMapper.readValue(analysis.getResult(), AIAnalysisResultResponseDto.class);
+                        } catch (JsonProcessingException e) {
+                            log.error("Failed to parse analysis result for analysisId: {}", analysis.getId(), e);
+                            return null; // 또는 예외 처리
+                        }
+                    }
+                )
+                .toList();
+    }
+
     /**
      * AI 분석 결과 업데이트 (RabbitMQ 리스너에서 호출)
      */

@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class AIAnalysisResultResponseDto {
     private String strength;
     private String weakness;
