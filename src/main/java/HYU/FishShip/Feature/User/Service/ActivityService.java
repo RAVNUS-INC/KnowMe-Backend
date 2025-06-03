@@ -85,7 +85,6 @@ public class ActivityService {
                 .tags(dto.getTags())
                 .visibility(dto.getVisibility())
                 .user(user)
-                .UpdatedAt(ZonedDateTime.now())
                 .build();
 
         activityRepository.save(activity);

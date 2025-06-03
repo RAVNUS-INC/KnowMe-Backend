@@ -5,7 +5,7 @@ import HYU.FishShip.Core.Entity.Posts;
 public class PostsMapper {
 
     public static Posts toEntity(PostsRequestDto dto) {
-        Posts post = Posts.builder()
+        return Posts.builder()
                 .category(dto.getCategory())
                 .title(dto.getTitle())
                 .company(dto.getCompany())
@@ -23,8 +23,6 @@ public class PostsMapper {
                 .targetAudience(dto.getTargetAudience())
                 .contestBenefits(dto.getContestBenefits())
                 .build();
-
-        return post;
     }
 
     public static PostsResponseDto toDto(Posts post) {
@@ -38,8 +36,8 @@ public class PostsMapper {
                 .content(post.getContent())
                 .image(post.getImage())
                 .location(post.getLocation())
-                .created_at(post.getCreated_at())
-                .updated_at(post.getUpdated_at())
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 }

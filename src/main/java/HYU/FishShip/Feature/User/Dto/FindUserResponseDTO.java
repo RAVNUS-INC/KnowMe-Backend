@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class FindUserResponseDTO {
 
+    private Long id;
     private String loginId;
     private String name;
     private String email;

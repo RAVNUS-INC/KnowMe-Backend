@@ -2,6 +2,10 @@ package HYU.FishShip.Core.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -21,4 +25,8 @@ public class Attachment {
     @JoinColumn(name = "post_id")
     private Posts post;
 
+    @CreatedDate
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 }

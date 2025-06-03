@@ -1,14 +1,17 @@
 package HYU.FishShip.Feature.User.Controller;
 
+import HYU.FishShip.Common.Utils.JwtUtil;
+import HYU.FishShip.Feature.User.Dto.LoginRequestDTO;
 import HYU.FishShip.Feature.User.Dto.LoginResponseDTO;
 import HYU.FishShip.Feature.User.Dto.LogoutResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +19,13 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
 
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+
+    public LoginController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+    }
 
     /**
      * 실제 로그인 로직은 LoginFilter를 통해 구현됨.
@@ -27,14 +37,24 @@ public class LoginController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (필수 파라미터 누락)")
     })
     @Operation(summary = "로그인 로직 (Swagger 명세 전용)", description = "userId와 password를 포함하여 POST api/user/login으로 요청을 보내면 기본 로그인 로직이 실행됩니다. " +
-            "이 엔드포인트는 실제 요청을 처리하지 않고 문서화를 위해 제공됩니다"+"프론트엔드 팀은 JWT 토큰을 localStorage나 sessionStorage에 저장한 뒤," +
+            "프론트엔드 팀은 JWT 토큰을 localStorage나 sessionStorage에 저장한 뒤," +
             " 인증이 필요한 API 요청 시 Authorization: Bearer <JWT 토큰> 형식으로 요청 헤더에 포함해 보내야 합니다.")
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> loginProc(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam(name = "userId") @NotBlank String userId,
-            @Parameter(description = "사용자 비밀번호", required = true) @RequestParam(name = "password") @NotBlank String password) {
-        LoginResponseDTO response = new LoginResponseDTO(HttpStatus.OK,"로그인 성공",null);
+    public ResponseEntity<LoginResponseDTO> loginProc(@RequestBody LoginRequestDTO loginRequestDTO) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequestDTO.getLoginId(),
+                            loginRequestDTO.getPassword())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new LoginResponseDTO(HttpStatus.UNAUTHORIZED, "로그인 실패: 잘못된 자격 증명", null));
+        }
 
+        String jwtToken = jwtUtil.createAccessToken(loginRequestDTO.getLoginId());
+
+        LoginResponseDTO response = new LoginResponseDTO(HttpStatus.OK, "로그인 성공", jwtToken);
         return ResponseEntity.ok(response);
     }
 

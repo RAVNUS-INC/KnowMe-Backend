@@ -63,6 +63,19 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다."));
 
         return FindUserResponseDTO.builder()
+                .id(user.getId())
+                .loginId(user.getLoginId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .build();
+    }
+
+    public FindUserResponseDTO getUserInfo(String loginId) {
+        User user = userRepository.findByLoginId(loginId);
+
+        return FindUserResponseDTO.builder()
+                .id(user.getId())
                 .loginId(user.getLoginId())
                 .name(user.getName())
                 .email(user.getEmail())

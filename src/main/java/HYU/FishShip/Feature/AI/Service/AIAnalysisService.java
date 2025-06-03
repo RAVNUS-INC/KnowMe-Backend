@@ -46,7 +46,6 @@ public class AIAnalysisService {
         // AIAnalysis 엔티티 생성
         AIAnalysis analysis = AIAnalysis.builder()
                 .analysis_type("포트폴리오")
-                .created_at(LocalDateTime.now())
                 .user(user)
                 .build();
 
@@ -87,9 +86,6 @@ public class AIAnalysisService {
     public AIAnalysisResultResponseDto getAnalysis(Long analysisId) throws JsonProcessingException {
         AIAnalysis analysis = aiAnalysisRepository.findById(analysisId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 분석이 존재하지 않습니다."));
-
-
-
         return objectMapper.readValue(analysis.getResult(), AIAnalysisResultResponseDto.class);
     }
 
@@ -101,7 +97,7 @@ public class AIAnalysisService {
         AIAnalysis analysis = aiAnalysisRepository.findById(analysisId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 분석이 존재하지 않습니다."));
 
-        analysis.setCompleted_at(LocalDateTime.now());
+        analysis.setCompletedAt(LocalDateTime.now());
         analysis.setResult(objectMapper.writeValueAsString(result));
         aiAnalysisRepository.save(analysis);
     }

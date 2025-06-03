@@ -2,7 +2,10 @@ package HYU.FishShip.Core.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -31,6 +34,8 @@ public class Activity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private ZonedDateTime CreatedAt;
-    private ZonedDateTime UpdatedAt;
+    @CreatedDate
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 }

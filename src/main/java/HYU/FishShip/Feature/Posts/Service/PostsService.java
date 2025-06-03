@@ -1,10 +1,7 @@
 package HYU.FishShip.Feature.Posts.Service;
 
 
-//import HYU.FishShip.Core.Entity.Attachment;
-//import HYU.FishShip.Core.Entity.Benefit;
 import HYU.FishShip.Core.Entity.Posts;
-//import HYU.FishShip.Core.Entity.Requirement;
 import HYU.FishShip.Core.Repository.PostsRepository;
 import HYU.FishShip.Feature.Posts.Dto.PostsMapper;
 import HYU.FishShip.Feature.Posts.Dto.PostsRequestDto;
@@ -14,9 +11,7 @@ import HYU.FishShip.Feature.Posts.Filter.PostFilterCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +22,6 @@ public class PostsService {
     // 공고 등록
     public PostsResponseDto createPost(PostsRequestDto dto) {
         Posts post = PostsMapper.toEntity(dto);
-
-        // 공고 생성 시간, 수정 시간 설정
-        post.setCreated_at(ZonedDateTime.now());
-        post.setUpdated_at(ZonedDateTime.now());
 
         Posts saved = postsRepository.save(post);
         return PostsMapper.toDto(saved);
@@ -50,7 +41,6 @@ public class PostsService {
                 .company_intro(dto.getCompany_intro())
                 .external_intro(dto.getExternal_intro())
                 .content(dto.getContent())
-                .updated_at(ZonedDateTime.now())
                 .jobTitle(dto.getJobTitle())  // 직무
                 .experience(dto.getExperience())  // 경력
                 .education(dto.getEducation())  // 학력
