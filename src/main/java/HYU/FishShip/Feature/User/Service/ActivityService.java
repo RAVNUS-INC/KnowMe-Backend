@@ -52,8 +52,6 @@ public class ActivityService {
                         .title(activity.getTitle())
                         .description(activity.getDescription())
                         .content(activity.getContent())
-                        .createdAt(activity.getCreatedAt().toString())
-                        .updatedAt(activity.getUpdatedAt().toString())
                         .visibility(activity.getVisibility())
                         .tags(activity.getTags())
                         .build())

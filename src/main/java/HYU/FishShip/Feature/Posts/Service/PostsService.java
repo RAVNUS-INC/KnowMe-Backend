@@ -52,8 +52,6 @@ public class PostsService {
                 .contestBenefits(dto.getContestBenefits())
                 .build();
 
-
-
         Posts updated = postsRepository.save(post);
         return PostsMapper.toDto(updated);
     }
