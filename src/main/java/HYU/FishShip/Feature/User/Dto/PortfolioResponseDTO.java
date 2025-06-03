@@ -2,6 +2,7 @@ package HYU.FishShip.Feature.User.Dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -22,13 +23,13 @@ public class PortfolioResponseDTO {
     @Builder
     public static class PortfolioDTO {
 
-        private Long portfolioId;
+        private Long id;
         private String title;
         private String description;
         private String content;
         private String visibility;
         private List<String> tags;
-        private String createdAt;
-        private String updatedAt;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
     }
 }

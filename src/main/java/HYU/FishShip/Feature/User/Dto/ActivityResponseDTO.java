@@ -2,6 +2,7 @@ package HYU.FishShip.Feature.User.Dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -19,6 +20,6 @@ public class ActivityResponseDTO {
     private String content;
     private List<String> tags;
     private String visibility;
-    private String createdAt;
-    private String updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

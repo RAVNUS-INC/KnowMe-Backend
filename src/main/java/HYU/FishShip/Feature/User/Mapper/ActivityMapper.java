@@ -13,8 +13,8 @@ public class ActivityMapper {
                 .content(activity.getContent())
                 .tags(activity.getTags())
                 .visibility(activity.getVisibility())
-                .createdAt(activity.getCreatedAt().toString())
-                .updatedAt(activity.getUpdatedAt().toString())
+                .createdAt(activity.getCreatedAt())
+                .updatedAt(activity.getUpdatedAt())
                 .build();
     }
 }
