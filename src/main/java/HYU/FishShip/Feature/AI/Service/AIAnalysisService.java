@@ -69,7 +69,13 @@ public class AIAnalysisService {
                 })
                 .toList());
         // 사용자의 교육
-        parameters.put("educations", user.getEducations());
+        parameters.put("educations", user.getEducations().stream().map(education -> {
+            Map<String, Object> educationData = new HashMap<>();
+            educationData.put("school", education.getSchool());
+            educationData.put("major", education.getMajor());
+            educationData.put("grade", education.getGrade());
+            return educationData;
+        }).toList());
 
         // RabbitMQ로 분석 작업 전송
         submitAIWork("ANALYZE", userId, savedAnalysis.getId(), parameters);
