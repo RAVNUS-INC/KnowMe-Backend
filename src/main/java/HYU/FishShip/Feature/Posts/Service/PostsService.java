@@ -42,6 +42,7 @@ public class PostsService {
                 .title(dto.getTitle())
                 .company(dto.getCompany())
                 .company_intro(dto.getCompany_intro())
+                .external_intro(dto.getExternal_intro())
                 .content(PostsMapper.toEntity(dto).getContent())
                 .experience(dto.getExperience())  // 경력
                 .education(dto.getEducation())  // 학력

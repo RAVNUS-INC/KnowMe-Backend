@@ -43,4 +43,5 @@ public class PostsRequestDto {
     private String external_info;
     private String external_location;
     private String external_time;
+    private String external_process;
 }
