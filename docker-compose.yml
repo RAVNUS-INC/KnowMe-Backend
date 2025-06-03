@@ -25,7 +25,6 @@ services:
       - JWT_ACCESS_CODE=${JWT_ACCESS_CODE}
       - JWT_REFRESH_CODE=${JWT_REFRESH_CODE}
     depends_on:
-      - chromadb
       - mysql
       - rabbitmq
       - minio
@@ -94,8 +93,6 @@ services:
       - knowme-network
 
 volumes:
-  chroma_data:
-    driver: local
   mysql_data:
     driver: local
   rabbitmq_data:
