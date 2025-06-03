@@ -38,7 +38,7 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
             @Param("location") String location
     );
 
-    @Query("SELECT p FROM Posts p WHERE p.title LIKE %:keyword% OR p.description LIKE %:keyword%")
+    @Query("SELECT p FROM Posts p WHERE p.title LIKE %:keyword% OR p.jobTitle LIKE %:keyword%")
     List<Posts> findByKeyword(@Param("keyword") String keyword);
 
 }
