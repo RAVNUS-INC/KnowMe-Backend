@@ -28,6 +28,7 @@ public class AIAnalysis{
     private Long id;
 
     private String analysis_type; // 분석 유형 (예: "포트폴리오", "채용공고 추천", "대외활동 추천")
+    private int activitiesCount; // 분석 대상 활동 수
 
     @CreatedDate
     private LocalDateTime createdAt;

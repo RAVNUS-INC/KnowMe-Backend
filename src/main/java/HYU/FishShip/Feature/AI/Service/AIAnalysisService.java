@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import HYU.FishShip.Feature.AI.Dto.AIAnalysesResponseDto;
 import HYU.FishShip.Feature.AI.Dto.AIAnalysisResultResponseDto;
 import HYU.FishShip.Feature.AI.Dto.AIAnalysisResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,21 +40,21 @@ public class AIAnalysisService {
      * 포트폴리오 분석 요청
      */
     @Transactional
-    public Pair<Long, Integer> requestPortfolioAnalysis(Long userId) {
+    public AIAnalysis requestPortfolioAnalysis(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+
+        // 사용자의 활동 데이터 수집
+        List<Activity> activities = activityRepository.findByUserId(userId);
 
         // AIAnalysis 엔티티 생성
         AIAnalysis analysis = AIAnalysis.builder()
                 .analysis_type("포트폴리오")
+                .activitiesCount(activities.size())
                 .user(user)
                 .build();
 
         AIAnalysis savedAnalysis = aiAnalysisRepository.save(analysis);
-
-        // 사용자의 활동 데이터 수집
-        List<Activity> activities = activityRepository.findByUserId(userId);
-        int activityCount = activities.size();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("analysisId", savedAnalysis.getId());
         parameters.put("userId", userId);
@@ -79,7 +80,7 @@ public class AIAnalysisService {
         // RabbitMQ로 분석 작업 전송
         submitAIWork("ANALYZE", userId, savedAnalysis.getId(), parameters);
 
-        return Pair.of(savedAnalysis.getId(), activityCount);
+        return savedAnalysis;
     }
 
     @Transactional
@@ -90,7 +91,7 @@ public class AIAnalysisService {
     }
 
     @Transactional
-    public List<AIAnalysisResultResponseDto> getAllAnalysis(Long userId) {
+    public List<AIAnalysesResponseDto> getAllAnalysis(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
         List<AIAnalysis> analyses = aiAnalysisRepository.findAIAnalysisByUser(user);
@@ -100,14 +101,11 @@ public class AIAnalysisService {
         return analyses.stream()
                 .filter(analysis -> analysis.getResult() != null)
                 .map(
-                    analysis -> {
-                        try {
-                            return objectMapper.readValue(analysis.getResult(), AIAnalysisResultResponseDto.class);
-                        } catch (JsonProcessingException e) {
-                            log.error("Failed to parse analysis result for analysisId: {}", analysis.getId(), e);
-                            return null; // 또는 예외 처리
-                        }
-                    }
+                    analysis -> AIAnalysesResponseDto.builder()
+                            .analysisId(analysis.getId())
+                            .activitiesCount(analysis.getActivitiesCount())
+                            .completedAt(analysis.getCompletedAt())
+                            .build()
                 )
                 .toList();
     }
