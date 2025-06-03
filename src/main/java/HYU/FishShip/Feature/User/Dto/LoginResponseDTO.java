@@ -8,11 +8,11 @@ public class LoginResponseDTO {
 
     private HttpStatus status;
     private String message;
-    private String data;
+    private String access;
 
-    public LoginResponseDTO(HttpStatus status, String message, String data) {
+    public LoginResponseDTO(HttpStatus status, String message, String access) {
         this.status = status;
         this.message = message;
-        this.data = data;
+        this.access = access;
     }
 }

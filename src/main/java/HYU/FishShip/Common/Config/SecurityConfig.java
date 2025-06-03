@@ -2,7 +2,6 @@ package HYU.FishShip.Common.Config;
 
 import HYU.FishShip.Common.Utils.JwtUtil;
 import HYU.FishShip.Feature.User.Filter.JwtFilter;
-import HYU.FishShip.Feature.User.Handler.ExceptionHandlerFilter;
 import HYU.FishShip.Feature.User.Service.CustomOauth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -26,13 +24,10 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final CustomOauth2UserService customOauth2UserService;
-    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
-    public SecurityConfig(JwtUtil jwtUtil,CustomOauth2UserService customOauth2UserService,
-                          ExceptionHandlerFilter exceptionHandlerFilter) {
+    public SecurityConfig(JwtUtil jwtUtil,CustomOauth2UserService customOauth2UserService) {
         this.jwtUtil = jwtUtil;
         this.customOauth2UserService = customOauth2UserService;
-        this.exceptionHandlerFilter = exceptionHandlerFilter;
     }
 
     @Bean
@@ -81,8 +76,6 @@ public class SecurityConfig {
         http
                 .formLogin((formLogin) -> formLogin.disable())
                 .logout((formLogout) -> formLogout.disable());
-        http.
-                addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class);
         http.
                 addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
