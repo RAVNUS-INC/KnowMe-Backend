@@ -3,6 +3,7 @@ package HYU.FishShip.Feature.User.Controller;
 import HYU.FishShip.Core.Entity.User;
 import HYU.FishShip.Core.Repository.UserRepository;
 import HYU.FishShip.Feature.User.Dto.*;
+import HYU.FishShip.Feature.User.Service.EducationService;
 import HYU.FishShip.Feature.User.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
+    private final EducationService educationService;
 
-    public UserController(UserService userService, UserRepository userRepository) {
+    public UserController(UserService userService, UserRepository userRepository, EducationService educationService) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.educationService = educationService;
     }
 
     @Operation(summary = "회원정보 수정", description = "회원 정보를 받아 수정합니다.")
@@ -44,6 +47,18 @@ public class UserController {
                     new UserEditResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류", null));
         }
 
+    }
+
+    @PostMapping("/edit/education/{educationId}")
+    private ResponseEntity<EducationEditResponseDTO> editEducation(@PathVariable Long educationId,
+                                                                          @RequestBody EducationEditRequestDTO requestDTO) {
+        try {
+            educationService.editEducation(educationId,requestDTO);
+            return ResponseEntity.ok(new EducationEditResponseDTO(HttpStatus.OK, "학력 정보 수정 성공", educationId));
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(new EducationEditResponseDTO(HttpStatus.BAD_REQUEST,
+                    "학력 정보 수정 도중 오류가 발생했습니다.", null));
+        }
     }
 
     @Operation(summary = "회원 탈퇴", description = "회원탈퇴")
