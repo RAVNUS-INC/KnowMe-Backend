@@ -21,16 +21,16 @@ public class SavedPostsService {
 
     // 공고를 저장
     public SavedPosts savePost(Long userId, Long postId) {
-        // 사용자 찾기
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+//        // 사용자 찾기
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
         // 공고 찾기
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 공고가 존재하지 않습니다."));
 
         // 공고 저장
         SavedPosts savedPost = SavedPosts.builder()
-                .user(user)
+                .userId(userId)
                 .post(post)
                 .build();
 
