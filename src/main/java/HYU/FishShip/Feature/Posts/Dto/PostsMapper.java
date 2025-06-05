@@ -27,7 +27,7 @@ public class PostsMapper {
 
     public static PostsResponseDto toDto(Posts post) {
         return PostsResponseDto.builder()
-                .post_id(post.getPost_id())
+                .post_id(post.getId())
                 .category(post.getCategory())
                 .title(post.getTitle())
                 .company(post.getCompany())
