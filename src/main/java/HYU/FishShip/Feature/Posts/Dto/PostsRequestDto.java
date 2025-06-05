@@ -39,9 +39,6 @@ public class PostsRequestDto {
     private String onlineOrOffline;    // 온/오프라인 여부 (전체, 온라인, 오프라인, 혼합)
     private String targetAudience;     // 대상 (대학생, 일반인, 제한없음)
     private String contestBenefits;    // 공모전 혜택 (상금, 상장, 상용화 등)
-
-    private ZonedDateTime created_at;
-    private ZonedDateTime updated_at;
 }
 
 //    private List<String> requirements = new ArrayList<>();

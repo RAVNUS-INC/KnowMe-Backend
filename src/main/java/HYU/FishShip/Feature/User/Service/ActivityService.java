@@ -11,9 +11,7 @@ import HYU.FishShip.Feature.User.Mapper.ActivityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +36,14 @@ public class ActivityService {
 
         activityRepository.save(activity);
 
-        return new ActivityResponseDTO();
+        return ActivityResponseDTO.builder()
+                .id(activity.getId())
+                .title(activity.getTitle())
+                .description(activity.getDescription())
+                .content(activity.getContent())
+                .visibility(activity.getVisibility())
+                .tags(activity.getTags())
+                .build();
     }
 
     // 활동 전체 조회 (userId 기준)
@@ -48,14 +53,14 @@ public class ActivityService {
         // Portfolio 형태
         List<PortfolioResponseDTO.PortfolioDTO> portfolioList = activities.stream()
                 .map(activity -> PortfolioResponseDTO.PortfolioDTO.builder()
-                        .portfolioId(activity.getId())
+                        .id(activity.getId())
                         .title(activity.getTitle())
                         .description(activity.getDescription())
                         .content(activity.getContent())
-                        .createdAt(activity.getCreatedAt().toString())
-                        .updatedAt(activity.getUpdatedAt().toString())
                         .visibility(activity.getVisibility())
                         .tags(activity.getTags())
+                        .createdAt(activity.getCreatedAt())
+                        .updatedAt(activity.getUpdatedAt())
                         .build())
                 .toList();
 
@@ -77,16 +82,12 @@ public class ActivityService {
         Activity activity = (Activity) activityRepository.findByUserIdAndId(userId, activityId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 활동이 존재하지 않습니다."));
 
-        activity = Activity.builder()
-                .id(activity.getId())
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .content(dto.getContent())
-                .tags(dto.getTags())
-                .visibility(dto.getVisibility())
-                .user(user)
-                .UpdatedAt(ZonedDateTime.now())
-                .build();
+        activity.setTitle(dto.getTitle());
+        activity.setDescription(dto.getDescription());
+        activity.setContent(dto.getContent());
+        activity.setTags(dto.getTags());
+        activity.setVisibility(dto.getVisibility());
+        activity.setUser(user);
 
         activityRepository.save(activity);
 

@@ -2,19 +2,17 @@ package HYU.FishShip.Core.Entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
+import HYU.FishShip.Feature.AI.Dto.AIAnalysisResponseDto;
+import HYU.FishShip.Feature.AI.Dto.AIAnalysisResultResponseDto;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
@@ -22,6 +20,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class AIAnalysis{
 
     @Id
@@ -29,9 +28,13 @@ public class AIAnalysis{
     private Long id;
 
     private String analysis_type; // 분석 유형 (예: "포트폴리오", "채용공고 추천", "대외활동 추천")
-    
-    private LocalDateTime created_at; // 생성 시간
-    private LocalDateTime completed_at; // 완료 시간
+    private int activitiesCount; // 분석 대상 활동 수
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+    private LocalDateTime completedAt; // 분석 완료 시간
 
     @Lob
     private String result; // 분석 결과 (JSON 형태로 저장)

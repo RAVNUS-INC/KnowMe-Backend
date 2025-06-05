@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import HYU.FishShip.Feature.AI.Dto.AIAnalysesResponseDto;
 import HYU.FishShip.Feature.AI.Dto.AIAnalysisResultResponseDto;
 import HYU.FishShip.Feature.AI.Dto.AIAnalysisResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,22 +40,21 @@ public class AIAnalysisService {
      * 포트폴리오 분석 요청
      */
     @Transactional
-    public Pair<Long, Integer> requestPortfolioAnalysis(Long userId) {
+    public AIAnalysis requestPortfolioAnalysis(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+
+        // 사용자의 활동 데이터 수집
+        List<Activity> activities = activityRepository.findByUserId(userId);
 
         // AIAnalysis 엔티티 생성
         AIAnalysis analysis = AIAnalysis.builder()
                 .analysis_type("포트폴리오")
-                .created_at(LocalDateTime.now())
+                .activitiesCount(activities.size())
                 .user(user)
                 .build();
 
         AIAnalysis savedAnalysis = aiAnalysisRepository.save(analysis);
-
-        // 사용자의 활동 데이터 수집
-        List<Activity> activities = activityRepository.findByUserId(userId);
-        int activityCount = activities.size();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("analysisId", savedAnalysis.getId());
         parameters.put("userId", userId);
@@ -69,22 +69,45 @@ public class AIAnalysisService {
                 })
                 .toList());
         // 사용자의 교육
-        parameters.put("educations", user.getEducations());
+        parameters.put("educations", user.getEducations().stream().map(education -> {
+            Map<String, Object> educationData = new HashMap<>();
+            educationData.put("school", education.getSchool());
+            educationData.put("major", education.getMajor());
+            educationData.put("grade", education.getGrade());
+            return educationData;
+        }).toList());
 
         // RabbitMQ로 분석 작업 전송
         submitAIWork("ANALYZE", userId, savedAnalysis.getId(), parameters);
 
-        return Pair.of(savedAnalysis.getId(), activityCount);
+        return savedAnalysis;
     }
 
     @Transactional
     public AIAnalysisResultResponseDto getAnalysis(Long analysisId) throws JsonProcessingException {
         AIAnalysis analysis = aiAnalysisRepository.findById(analysisId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 분석이 존재하지 않습니다."));
-
-
-
         return objectMapper.readValue(analysis.getResult(), AIAnalysisResultResponseDto.class);
+    }
+
+    @Transactional
+    public List<AIAnalysesResponseDto> getAllAnalysis(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+        List<AIAnalysis> analyses = aiAnalysisRepository.findAIAnalysisByUser(user);
+        if (analyses.isEmpty()) {
+            throw new IllegalArgumentException("해당 사용자의 분석 결과가 존재하지 않습니다.");
+        }
+        return analyses.stream()
+                .filter(analysis -> analysis.getResult() != null)
+                .map(
+                    analysis -> AIAnalysesResponseDto.builder()
+                            .analysisId(analysis.getId())
+                            .activitiesCount(analysis.getActivitiesCount())
+                            .completedAt(analysis.getCompletedAt())
+                            .build()
+                )
+                .toList();
     }
 
     /**
@@ -95,7 +118,7 @@ public class AIAnalysisService {
         AIAnalysis analysis = aiAnalysisRepository.findById(analysisId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 분석이 존재하지 않습니다."));
 
-        analysis.setCompleted_at(LocalDateTime.now());
+        analysis.setCompletedAt(LocalDateTime.now());
         analysis.setResult(objectMapper.writeValueAsString(result));
         aiAnalysisRepository.save(analysis);
     }
@@ -111,7 +134,6 @@ public class AIAnalysisService {
      */
     public void submitAIWork(String taskType, Long userId, Long analysisId, Map<String, Object> parameters) {
         AIWorkRequest request = new AIWorkRequest(analysisId, taskType, userId, parameters, LocalDateTime.now());
-        request.setAnalysisId(analysisId);
         
         try {
             rabbitTemplate.convertAndSend(

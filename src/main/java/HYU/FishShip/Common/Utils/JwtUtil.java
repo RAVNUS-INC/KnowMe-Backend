@@ -23,11 +23,10 @@ public class JwtUtil {
     /**
      * Access Token 생성 메서드
      */
-    public String createAccessToken(String loginId, String role) {
+    public String createAccessToken(String loginId) {
         return Jwts.builder()
                 .claim("category", "access")
                 .claim("loginId", loginId)
-                .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_DURATION))
                 .signWith(accessKey)
@@ -39,7 +38,7 @@ public class JwtUtil {
      * @param token jwt token
      * @return claims
      */
-    public Claims getClaims(String token, boolean isAccessToken) {
+    public Claims getClaims(String token) {
         SecretKey key = accessKey;
         return Jwts.parser()
                 .verifyWith(key)

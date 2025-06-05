@@ -8,12 +8,18 @@ import HYU.FishShip.Feature.User.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/user")
+@Slf4j
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
@@ -25,6 +31,26 @@ public class UserController {
         this.educationService = educationService;
     }
 
+    @GetMapping("/me")
+    @Operation(summary = "현재 로그인된 사용자 정보 조회", description = "현재 로그인된 사용자의 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "사용자 정보가 존재하지 않음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    public ResponseEntity<FindUserResponseDTO> getCurrentUserInfo(@AuthenticationPrincipal String loginId) {
+        try {
+            FindUserResponseDTO userInfo = userService.getUserInfo(loginId);
+
+            return ResponseEntity.ok(userInfo);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            log.info("Error retrieving user info: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @Operation(summary = "회원정보 수정", description = "회원 정보를 받아 수정합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원정보 수정 성공"),
@@ -32,7 +58,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping("/edit/{userId}")
-    private ResponseEntity<UserEditResponseDTO<Long>> editUser(@PathVariable Long userId,
+    public ResponseEntity<UserEditResponseDTO<Long>> editUser(@PathVariable Long userId,
                                                                @RequestBody UserEditRequestDTO requestDTO) {
 
         try {
@@ -50,7 +76,7 @@ public class UserController {
     }
 
     @PostMapping("/edit/education/{educationId}")
-    private ResponseEntity<EducationEditResponseDTO> editEducation(@PathVariable Long educationId,
+    public ResponseEntity<EducationEditResponseDTO> editEducation(@PathVariable Long educationId,
                                                                           @RequestBody EducationEditRequestDTO requestDTO) {
         try {
             educationService.editEducation(educationId,requestDTO);
@@ -68,7 +94,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @DeleteMapping("/delete/{userId}")
-    private ResponseEntity<UserDeleteResponseDTO<Long>> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<UserDeleteResponseDTO<Long>> deleteUser(@PathVariable Long userId) {
         try {
             userService.deleteUser(userId);
             return ResponseEntity.ok(new UserDeleteResponseDTO<>(HttpStatus.OK, "회원 탈퇴 성공", userId));
@@ -89,7 +115,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/{userId}")
-    private ResponseEntity<FindUserResponseDTO> getUserInfo(@PathVariable Long userId) {
+    public ResponseEntity<FindUserResponseDTO> getUserInfo(@PathVariable Long userId) {
 
         FindUserResponseDTO userInfo = userService.getUserInfo(userId);
         userInfo.setStatus(HttpStatus.OK);
@@ -106,7 +132,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping("/findId")
-    private ResponseEntity<FindUserIdResponseDTO> checkUserId(@RequestBody FindUserIdRequestDTO requestDTO) {
+    public ResponseEntity<FindUserIdResponseDTO> checkUserId(@RequestBody FindUserIdRequestDTO requestDTO) {
         try {
             User user = userService.findUserId(requestDTO);
             String loginId = user.getLoginId();
@@ -126,7 +152,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PutMapping("/editPassword")
-    private ResponseEntity<PasswordEditResponseDTO> editPassword(@RequestBody PasswordRequestDTO requestDTO) {
+    public ResponseEntity<PasswordEditResponseDTO> editPassword(@RequestBody PasswordRequestDTO requestDTO) {
         try {
             if (userService.editPassword(requestDTO)) {
                 return ResponseEntity.ok(new PasswordEditResponseDTO(HttpStatus.OK, "비밀번호 수정 성공"));

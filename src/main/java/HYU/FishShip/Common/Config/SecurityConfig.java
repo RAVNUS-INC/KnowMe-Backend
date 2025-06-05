@@ -3,6 +3,7 @@ package HYU.FishShip.Common.Config;
 import HYU.FishShip.Common.Utils.JwtUtil;
 import HYU.FishShip.Feature.User.Filter.*;
 import HYU.FishShip.Feature.User.Handler.ExceptionHandlerFilter;
+
 import HYU.FishShip.Feature.User.Service.CustomOauth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -37,7 +37,7 @@ public class SecurityConfig {
         this.exceptionHandlerFilter = exceptionHandlerFilter;
         this.customOuth2SuccessHandler = customOuth2SuccessHandler;
         this.customOAuth2FailuerHandler = customOAuth2FailuerHandler;
-    }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -88,14 +88,7 @@ public class SecurityConfig {
                 .formLogin((formLogin) -> formLogin.disable())
                 .logout((formLogout) -> formLogout.disable());
         http.
-                addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class);
-        http.
                 addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-        http
-                .addFilterAt(new LoginFilter(authenticationManager,jwtUtil),
-                        UsernamePasswordAuthenticationFilter.class);
-        http
-                .addFilterAt(new CustomLogoutFilter(), LogoutFilter.class);
 
         /**
          * cors 관련 설정

@@ -4,10 +4,11 @@ package HYU.FishShip.Core.Entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-//import java.time.LocalDate;
-import java.time.ZonedDateTime;
-//import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -16,11 +17,13 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties({"requirements", "benefits", "attachments"})
+@EntityListeners(AuditingEntityListener.class)
 public class Posts {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long post_id;
+    @Column(name ="post_id")
+    private Long id;
 
     private String category;
 
@@ -34,8 +37,10 @@ public class Posts {
     private String image;
     private String location;
 
-    private ZonedDateTime created_at;
-    private ZonedDateTime updated_at;
+    @CreatedDate
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
     // 채용공고, 인턴공고 필터링 필드
     private String jobTitle;    // 직무

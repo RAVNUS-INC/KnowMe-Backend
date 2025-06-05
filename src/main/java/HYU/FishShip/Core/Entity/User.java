@@ -2,15 +2,19 @@ package HYU.FishShip.Core.Entity;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class User {
 
     @Id
@@ -41,6 +45,11 @@ public class User {
     @Column(name = "provider_id")
     private String providerId;
 
+    @CreatedDate
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Education> educations = new ArrayList<>();
 
@@ -56,16 +65,6 @@ public class User {
     public void addEducation(Education education) {
         educations.add(education);
         education.setUser(this);
-    }
-
-    public void addProject(Project project) {
-        projects.add(project);
-        project.setUser(this);
-    }
-
-    public void addExperience(Experience experience) {
-        experiences.add(experience);
-        experience.setUser(this);
     }
 
 }

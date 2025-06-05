@@ -1,5 +1,7 @@
 package HYU.FishShip.Feature.AI.Controller;
 
+import HYU.FishShip.Core.Entity.AIAnalysis;
+import HYU.FishShip.Feature.AI.Dto.AIAnalysesResponseDto;
 import HYU.FishShip.Feature.AI.Dto.AIAnalysisRequestDto;
 import HYU.FishShip.Feature.AI.Dto.AIAnalysisResultResponseDto;
 import org.springframework.data.util.Pair;
@@ -13,6 +15,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/ai")
 @RequiredArgsConstructor
@@ -25,10 +29,11 @@ public class AIWorkController {
     @Operation(summary = "포트폴리오 분석", description = "사용자의 포트폴리오를 분석하고 분석 ID를 반환합니다.")
     public ResponseEntity<AIAnalysisResponseDto> analyzePortfolio(@RequestBody AIAnalysisRequestDto aiAnalysisRequestDto) {
         try {
-            Pair<Long, Integer> result = aiAnalysisService.requestPortfolioAnalysis(aiAnalysisRequestDto.getUserId());
+            AIAnalysis result = aiAnalysisService.requestPortfolioAnalysis(aiAnalysisRequestDto.getUserId());
             AIAnalysisResponseDto response = AIAnalysisResponseDto.builder()
-                    .analysisId(result.getFirst())
-                    .activitiesCount(result.getSecond())
+                    .analysisId(result.getId())
+                    .activitiesCount(result.getActivitiesCount())
+                    .createdAt(result.getCreatedAt())
                     .message("포트폴리오 분석 요청이 성공적으로 처리되었습니다.")
                     .build();
             
@@ -53,4 +58,15 @@ public class AIWorkController {
         }
     }
 
+    @GetMapping("/analyses/{userId}")
+    @Operation(summary = "모든 포트폴리오 분석 결과 조회", description = "모든 포트폴리오 분석 결과를 조회합니다.")
+    public ResponseEntity<List<AIAnalysesResponseDto>> getAllPortfolioAnalysisResults(@PathVariable Long userId) {
+        try {
+            List<AIAnalysesResponseDto> result = aiAnalysisService.getAllAnalysis(userId);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 }
