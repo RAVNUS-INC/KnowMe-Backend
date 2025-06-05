@@ -1,7 +1,9 @@
 package HYU.FishShip.Common.Config;
 
 import HYU.FishShip.Common.Utils.JwtUtil;
-import HYU.FishShip.Feature.User.Filter.JwtFilter;
+import HYU.FishShip.Feature.User.Filter.*;
+import HYU.FishShip.Feature.User.Handler.ExceptionHandlerFilter;
+
 import HYU.FishShip.Feature.User.Service.CustomOauth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
@@ -24,11 +26,18 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final CustomOauth2UserService customOauth2UserService;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
+    private final CustomOuth2SuccessHandler customOuth2SuccessHandler;
+    private final CustomOAuth2FailuerHandler customOAuth2FailuerHandler;
 
-    public SecurityConfig(JwtUtil jwtUtil,CustomOauth2UserService customOauth2UserService) {
+    public SecurityConfig(JwtUtil jwtUtil, CustomOauth2UserService customOauth2UserService,
+                          ExceptionHandlerFilter exceptionHandlerFilter, CustomOuth2SuccessHandler customOuth2SuccessHandler, CustomOAuth2FailuerHandler customOAuth2FailuerHandler) {
         this.jwtUtil = jwtUtil;
         this.customOauth2UserService = customOauth2UserService;
-    }
+        this.exceptionHandlerFilter = exceptionHandlerFilter;
+        this.customOuth2SuccessHandler = customOuth2SuccessHandler;
+        this.customOAuth2FailuerHandler = customOAuth2FailuerHandler;
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -62,6 +71,8 @@ public class SecurityConfig {
                 .oauth2Login((oauth) ->
                         oauth.userInfoEndpoint((userInfo) ->
                         {userInfo.userService(customOauth2UserService);})
+                                .successHandler(customOuth2SuccessHandler)
+                                .failureHandler(customOAuth2FailuerHandler)
                 );
         
         /**
