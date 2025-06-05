@@ -33,9 +33,7 @@ public class CustomOuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         CustomUserDetail userDetail = (CustomUserDetail) auth.getPrincipal();
         String loginId = userDetail.getUsername();
-        String role = userDetail.getUsername().toString();
-
-        String accessToken = jwtUtil.createAccessToken(loginId, role);
+        String accessToken = jwtUtil.createAccessToken(loginId);
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("Location", "https://nid.naver.com/oauth2.0/authorize");
