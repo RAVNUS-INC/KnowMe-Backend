@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface SavedPostsRepository extends JpaRepository<SavedPosts, Long> {
     List<SavedPosts> findByUserId(Long userId);
+
+    boolean existsByUserIdAndPostId(Long userid, Long postid);
 }

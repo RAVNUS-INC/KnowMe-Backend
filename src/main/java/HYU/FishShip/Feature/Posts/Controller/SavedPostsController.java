@@ -21,8 +21,13 @@ public class SavedPostsController {
     public ResponseEntity<SavedPosts> savePost(
             @PathVariable("post_id") Long postId,
             @PathVariable("user_id") Long userId) {
-        SavedPosts savedPost = savedPostsService.savePost(userId, postId);
-        return ResponseEntity.status(201).body(savedPost);
+        try {
+            SavedPosts savedPost = savedPostsService.savePost(userId, postId);
+            return ResponseEntity.status(201).body(savedPost);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(400).body(null);
+        }
     }
 
     // 사용자가 저장한 공고들 조회
